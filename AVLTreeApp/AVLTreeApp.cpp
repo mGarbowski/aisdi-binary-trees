@@ -3,19 +3,23 @@
 #include <chrono>
 #include <thread>
 #include "..\AVLTreeLib\AVLTree.h"
-#include "..\benchmark\benchmark.h"
 
 class Key
 {
 private:
+	static unsigned long long cmpCount;
 	unsigned long value = 0UL;
-	static bool performDelay;
-	void delay() const
-	{
-		if (performDelay)
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-	}
 public:
+	static void resetCounter()
+	{
+		cmpCount = 0ULL;
+	}
+
+	static unsigned long long getCmpCount()
+	{
+		return cmpCount;
+	}
+
 	Key() = default;
 
 	Key(Key const&) = default;
@@ -29,58 +33,54 @@ public:
 		return value;
 	}
 
-	static void delayOn()
-	{
-		performDelay = true;
-	}
-
-	static void delayOff()
-	{
-		performDelay = false;
-	}
-
-
 	bool operator==(Key const& v) const
 	{
-		delay();
+		++cmpCount;
 		return value == v.value;
 	}
 
 	bool operator!=(Key const& v) const
 	{
-		delay();
+		++cmpCount;
 		return value != v.value;
 	}
 
 	bool operator<(Key const& v) const
 	{
-		delay();
+		++cmpCount;
 		return value < v.value;
 	}
 	bool operator<=(Key const& v) const
 	{
-		delay();
+		++cmpCount;
 		return value <= v.value;
 	}
 	bool operator>(Key const& v) const
 	{
-		delay();
+		++cmpCount;
 		return value > v.value;
 	}
 	bool operator>=(Key const& v) const
 	{
-		delay();
+		++cmpCount;
 		return value >= v.value;
 	}
-
 };
 
-bool Key::performDelay = false;
+unsigned long long Key::cmpCount = 0ULL;
 
-std::ostream & operator << (std::ostream& stream, Key const& key)
+std::ostream& operator << (std::ostream& stream, Key const& key)
 {
 	stream << key.getKey();
 	return stream;
+}
+
+namespace std
+{
+	std::string to_string(Key const& k)
+	{
+		return std::to_string(k.getKey());
+	}
 }
 
 int main()
@@ -95,7 +95,6 @@ int main()
 		std::cin >> size;
 		if (size > 0)
 		{
-			Key::delayOff();
 			AVLTree<Key, unsigned long> tree;
 			while (tree.size() < size)
 			{
@@ -108,19 +107,16 @@ int main()
 			if (tree.size() <= 100)
 				std::cout << tree;
 
-			Key::delayOn();
-			unsigned long long sum = 0;
-			int i;
+			Key::resetCounter();
+			unsigned int i;
 			for (i = 0; i < 10; ++i)
 			{
 				unsigned long n = generator();
 				Key key(n);
 
-				Benchmark<std::chrono::nanoseconds> b;
 				tree.find(Key(key));
-				sum += b.elapsed();
 			}
-			std::cout << "Time: " << sum / i << "\n";
+			std::cout << "Cmp count: " << Key::getCmpCount() / i << "\n";
 		}
 	} while (size > 0);
 	return 0;
