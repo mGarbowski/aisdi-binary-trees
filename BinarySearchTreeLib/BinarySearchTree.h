@@ -26,6 +26,6 @@ public:
 
 template<typename KeyType, typename ValueType>
 std::ostream &operator<<(std::ostream &stream, BinarySearchTree<KeyType, ValueType> const &tree) {
-    tree.print<std::ostream>(stream);
+    tree.print(stream);
     return stream;
 }
