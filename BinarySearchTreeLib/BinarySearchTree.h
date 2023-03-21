@@ -6,9 +6,25 @@
 #include <ostream>
 #include <iomanip>
 
+
+template<typename KeyType, typename ValueType>
+class BSTNode
+{
+public:
+    BSTNode *LeftChild;
+    BSTNode *RightChild;
+    BSTNode *Parent;
+    ValueType *value;
+    KeyType key;
+    BSTNode(KeyType key, ValueType value, BSTNode* parent);
+};
+
+
 template<typename KeyType, typename ValueType>
 class BinarySearchTree {
 public:
+
+    BSTNode<KeyType, ValueType> *root;
 
     size_t size() const;
 
