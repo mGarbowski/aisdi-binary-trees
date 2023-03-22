@@ -10,18 +10,49 @@ template<typename KeyType, typename ValueType>
 class AVLNode {
 public:
     KeyType key;
-    ValueType value;
+    ValueType *value;
     int balanceCoefficient;
     AVLNode *leftChild;
     AVLNode *rightChild;
     AVLNode *parent;
 
-    AVLNode(KeyType key, ValueType value);
+    AVLNode(KeyType key, ValueType val);
 
     AVLNode(KeyType key, ValueType value, AVLNode *parent);
 
     std::string toString() const;
 };
+
+template<typename KeyType, typename ValueType>
+AVLNode<KeyType, ValueType>::AVLNode(KeyType key, ValueType val) {
+    this->key = key;
+    auto* valuePtr = new ValueType();
+    *valuePtr = val;
+    value = valuePtr;
+    parent = nullptr;
+    leftChild = nullptr;
+    rightChild = nullptr;
+    balanceCoefficient = 0;
+}
+
+template<typename KeyType, typename ValueType>
+AVLNode<KeyType, ValueType>::AVLNode(KeyType key, ValueType val, AVLNode *parent) {
+    this->key = key;
+    auto* valuePtr = new ValueType();
+    *valuePtr = val;
+    value = valuePtr;
+    this->parent = parent;
+    leftChild = nullptr;
+    rightChild = nullptr;
+    balanceCoefficient = 0;
+}
+
+template<typename KeyType, typename ValueType>
+std::string AVLNode<KeyType, ValueType>::toString() const {
+    std::ostringstream stringStream;
+    stringStream << "[" << key << "," << *value << "]";
+    return stringStream.str();
+}
 
 
 template<typename KeyType, typename ValueType>
@@ -50,33 +81,6 @@ public:
     void print(StreamType &stream) const;
 };
 
-template<typename KeyType, typename ValueType>
-AVLNode<KeyType, ValueType>::AVLNode(KeyType key, ValueType value) {
-    this->key = key;
-    this->value = value;
-    parent = nullptr;
-    leftChild = nullptr;
-    rightChild = nullptr;
-    balanceCoefficient = 0;
-}
-
-template<typename KeyType, typename ValueType>
-AVLNode<KeyType, ValueType>::AVLNode(KeyType key, ValueType value, AVLNode *parent) {
-    this->key = key;
-    this->value = value;
-    this->parent = parent;
-    leftChild = nullptr;
-    rightChild = nullptr;
-    balanceCoefficient = 0;
-}
-
-template<typename KeyType, typename ValueType>
-std::string AVLNode<KeyType, ValueType>::toString() const {
-    std::ostringstream stringStream;
-    stringStream << "[" << key << "," << value << "]";
-    return stringStream.str();
-}
-
 
 template<typename KeyType, typename ValueType>
 AVLTree<KeyType, ValueType>::AVLTree() {
@@ -103,7 +107,8 @@ void AVLTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &va
 
     // Replace key
     if (key == root->key) {
-        root->value = value;
+        auto v = root->value;
+        *v = value;
 
     } else if (key < root->key) {
         if (root->leftChild == nullptr) {
@@ -125,7 +130,17 @@ void AVLTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &va
 
 template<typename KeyType, typename ValueType>
 ValueType *AVLTree<KeyType, ValueType>::find(const KeyType &key) {
-    return nullptr;
+    if (root == nullptr) {
+        return nullptr;
+    }
+
+    if (key == root->key) {
+        return root->value;
+    } else if (key < root->key) {
+        return this->leftSubtree().find(key);
+    } else {
+        return this->rightSubtree().find(key);
+    }
 }
 
 template<typename KeyType, typename ValueType>
