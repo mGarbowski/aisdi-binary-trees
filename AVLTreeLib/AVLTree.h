@@ -16,7 +16,7 @@ public:
     AVLNode *rightChild;
     AVLNode *parent;
 
-    AVLNode(KeyType key, ValueType val);
+    AVLNode(KeyType key, ValueType value);
 
     AVLNode(KeyType key, ValueType value, AVLNode *parent);
 
@@ -24,11 +24,11 @@ public:
 };
 
 template<typename KeyType, typename ValueType>
-AVLNode<KeyType, ValueType>::AVLNode(KeyType key, ValueType val) {
+AVLNode<KeyType, ValueType>::AVLNode(KeyType key, ValueType value) {
     this->key = key;
     auto* valuePtr = new ValueType();
-    *valuePtr = val;
-    value = valuePtr;
+    *valuePtr = value;
+    this->value = valuePtr;
     parent = nullptr;
     leftChild = nullptr;
     rightChild = nullptr;
@@ -36,11 +36,11 @@ AVLNode<KeyType, ValueType>::AVLNode(KeyType key, ValueType val) {
 }
 
 template<typename KeyType, typename ValueType>
-AVLNode<KeyType, ValueType>::AVLNode(KeyType key, ValueType val, AVLNode *parent) {
+AVLNode<KeyType, ValueType>::AVLNode(KeyType key, ValueType value, AVLNode *parent) {
     this->key = key;
     auto* valuePtr = new ValueType();
-    *valuePtr = val;
-    value = valuePtr;
+    *valuePtr = value;
+    this->value = valuePtr;
     this->parent = parent;
     leftChild = nullptr;
     rightChild = nullptr;
