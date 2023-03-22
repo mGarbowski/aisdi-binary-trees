@@ -16,15 +16,15 @@ public:
     AVLNode *rightChild;
     AVLNode *parent;
 
-    AVLNode(KeyType key, ValueType value);
+    AVLNode(KeyType key, const ValueType &value);
 
-    AVLNode(KeyType key, ValueType value, AVLNode *parent);
+    AVLNode(KeyType key, const ValueType &value, AVLNode *parent);
 
     std::string toString() const;
 };
 
 template<typename KeyType, typename ValueType>
-AVLNode<KeyType, ValueType>::AVLNode(KeyType key, ValueType value) {
+AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value) {
     this->key = key;
     auto* valuePtr = new ValueType();
     *valuePtr = value;
@@ -36,7 +36,7 @@ AVLNode<KeyType, ValueType>::AVLNode(KeyType key, ValueType value) {
 }
 
 template<typename KeyType, typename ValueType>
-AVLNode<KeyType, ValueType>::AVLNode(KeyType key, ValueType value, AVLNode *parent) {
+AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value, AVLNode *parent) {
     this->key = key;
     auto* valuePtr = new ValueType();
     *valuePtr = value;
