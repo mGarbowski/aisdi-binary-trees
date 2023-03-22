@@ -117,7 +117,13 @@ AVLTree<KeyType, ValueType>::AVLTree(AVLNode<KeyType, ValueType> *root) {
 
 template<typename KeyType, typename ValueType>
 size_t AVLTree<KeyType, ValueType>::size() const {
-    return 0;
+    if (root == nullptr) {
+        return 0;
+    }
+
+    auto left = this->leftSubtree().size();
+    auto right = this->rightSubtree().size();
+    return left + 1 + right;
 }
 
 template<typename KeyType, typename ValueType>
@@ -128,12 +134,7 @@ void AVLTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &va
         return;
     }
 
-    // Replace key
-    if (key == root->key) {
-        auto v = root->value;
-        *v = value;
-
-    } else if (key < root->key) {
+    if (key < root->key) {
         if (root->leftChild == nullptr) {
             root->leftChild = new AVLNode<KeyType, ValueType>(key, value, root);
         } else {
@@ -141,13 +142,17 @@ void AVLTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &va
         }
         root->balanceCoefficient++;
 
-    } else {
+    } else if (key > root->key) {
         if (root->rightChild == nullptr) {
             root->rightChild = new AVLNode<KeyType, ValueType>(key, value, root);
         } else {
             this->rightSubtree().insert(key, value);
         }
         root->balanceCoefficient--;
+
+    } else {
+        auto v = root->value;
+        *v = value;
     }
 }
 
@@ -157,12 +162,12 @@ ValueType *AVLTree<KeyType, ValueType>::find(const KeyType &key) {
         return nullptr;
     }
 
-    if (key == root->key) {
-        return root->value;
-    } else if (key < root->key) {
+    if (key < root->key) {
         return this->leftSubtree().find(key);
-    } else {
+    } else if (key > root->key) {
         return this->rightSubtree().find(key);
+    } else {
+        return root->value;
     }
 }
 
@@ -171,10 +176,12 @@ std::string AVLTree<KeyType, ValueType>::toString() const {
     if (root == nullptr) {
         return "";
     }
-    std::ostringstream stringStream;
+
     auto visit = root->toString();
     auto left = this->leftSubtree().toString();
     auto right = this->rightSubtree().toString();
+
+    std::ostringstream stringStream;
     stringStream << "(" << visit << "," << left << "," << right << ")";
     return stringStream.str();
 }
