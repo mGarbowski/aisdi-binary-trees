@@ -12,6 +12,11 @@ namespace AVLTreeUnitTest {
         ASSERT_EQ("[1,0]", node.toString());
     }
 
+    TEST(AVLNode, toStringSeparator) {
+        AVLNode<int, int> node = AVLNode<int, int>(10, 20);
+        ASSERT_EQ("[10, 20]", node.toString(" "));
+    }
+
     TEST(AVLTree, leftRootRotationAfterInsert) {
         AVLTree<int, int> tree;
         tree.insert(10, 10);

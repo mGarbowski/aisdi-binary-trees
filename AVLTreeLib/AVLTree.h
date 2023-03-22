@@ -21,12 +21,14 @@ public:
     AVLNode(KeyType key, const ValueType &value, AVLNode *parent);
 
     std::string toString() const;
+
+    std::string toString(std::string separator) const;
 };
 
 template<typename KeyType, typename ValueType>
 AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value) {
     this->key = key;
-    auto* valuePtr = new ValueType();
+    auto *valuePtr = new ValueType();
     *valuePtr = value;
     this->value = valuePtr;
     parent = nullptr;
@@ -38,7 +40,7 @@ AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value) {
 template<typename KeyType, typename ValueType>
 AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value, AVLNode *parent) {
     this->key = key;
-    auto* valuePtr = new ValueType();
+    auto *valuePtr = new ValueType();
     *valuePtr = value;
     this->value = valuePtr;
     this->parent = parent;
@@ -49,8 +51,13 @@ AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value, AVLNod
 
 template<typename KeyType, typename ValueType>
 std::string AVLNode<KeyType, ValueType>::toString() const {
+    return this->toString(std::string());
+}
+
+template<typename KeyType, typename ValueType>
+std::string AVLNode<KeyType, ValueType>::toString(std::string separator) const {
     std::ostringstream stringStream;
-    stringStream << "[" << key << "," << *value << "]";
+    stringStream << "[" << key << "," << separator << *value << "]";
     return stringStream.str();
 }
 
@@ -58,11 +65,18 @@ std::string AVLNode<KeyType, ValueType>::toString() const {
 template<typename KeyType, typename ValueType>
 class AVLTree {
 private:
+    static const auto PRINT_NEST_INDENT = 4;
+
     AVLNode<KeyType, ValueType> *root;
 
     AVLTree<KeyType, ValueType> leftSubtree() const;
 
     AVLTree<KeyType, ValueType> rightSubtree() const;
+
+    template<typename StreamType>
+    void print(StreamType &stream, int indent, std::string prefix) const;
+
+    static std::string indentWhitespace(int spaces);
 
 public:
     AVLTree();
@@ -81,11 +95,20 @@ public:
     void print(StreamType &stream) const;
 };
 
+template<typename KeyType, typename ValueType>
+std::string AVLTree<KeyType, ValueType>::indentWhitespace(int spaces) {
+    std::ostringstream ss;
+    for (int i = 0; i < spaces; ++i) {
+        ss << " ";
+    }
+    return ss.str();
+}
 
 template<typename KeyType, typename ValueType>
 AVLTree<KeyType, ValueType>::AVLTree() {
     root = nullptr;
 }
+
 
 template<typename KeyType, typename ValueType>
 AVLTree<KeyType, ValueType>::AVLTree(AVLNode<KeyType, ValueType> *root) {
@@ -159,7 +182,22 @@ std::string AVLTree<KeyType, ValueType>::toString() const {
 template<typename KeyType, typename ValueType>
 template<typename StreamType>
 void AVLTree<KeyType, ValueType>::print(StreamType &stream) const {
+    this->print(stream, 0, "");
+}
 
+template<typename KeyType, typename ValueType>
+template<typename StreamType>
+void AVLTree<KeyType, ValueType>::print(StreamType &stream, int indent, std::string prefix) const {
+    if (root == nullptr) {
+        return;
+    }
+    stream << indentWhitespace(indent) << prefix << root->toString(" ") << "\n";
+    if (root->leftChild != nullptr) {
+        this->leftSubtree().print(stream, indent + PRINT_NEST_INDENT, "L: ");
+    }
+    if (root->rightChild != nullptr) {
+        this->rightSubtree().print(stream, indent + PRINT_NEST_INDENT, "R: ");
+    }
 }
 
 template<typename KeyType, typename ValueType>
