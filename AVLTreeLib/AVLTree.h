@@ -69,6 +69,8 @@ private:
 
     AVLNode<KeyType, ValueType> *root;
 
+    explicit AVLTree(AVLNode<KeyType, ValueType> *root);
+
     AVLTree<KeyType, ValueType> leftSubtree() const;
 
     AVLTree<KeyType, ValueType> rightSubtree() const;
@@ -77,11 +79,9 @@ private:
     void print(StreamType &stream, int indent, std::string prefix) const;
 
     static std::string indentWhitespace(int spaces);
-
 public:
-    AVLTree();
 
-    explicit AVLTree(AVLNode<KeyType, ValueType> *root);
+    AVLTree();
 
     size_t size() const;
 
