@@ -11,7 +11,7 @@ class AVLTree {
 public:
     size_t size() const;
 
-    void insert(KeyType const &key, ValueType const &value);
+    void insert(KeyType const &key, ValueType const &value);  // Should not calculate height
 
     ValueType *find(KeyType const &key);
 
@@ -23,6 +23,6 @@ public:
 
 template<typename KeyType, typename ValueType>
 std::ostream &operator<<(std::ostream &stream, AVLTree<KeyType, ValueType> const &tree) {
-    tree.print<std::ostream>(stream);
+    tree.print(stream);
     return stream;
 }
