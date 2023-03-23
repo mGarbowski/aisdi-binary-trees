@@ -98,6 +98,10 @@ private:
 
     static std::string indentWhitespace(int spaces);
 
+    static AVLNode<KeyType, ValueType> *rotateRight(AVLNode<KeyType, ValueType> *rotationRoot);
+    static AVLNode<KeyType, ValueType> *rotateLeft(AVLNode<KeyType, ValueType> *rotationRoot);
+    void rebalance(KeyType insertedKey);
+
 public:
 
     AVLTree();
@@ -113,6 +117,47 @@ public:
     template<typename StreamType>
     void print(StreamType &stream) const;
 };
+
+template<typename KeyType, typename ValueType>
+void AVLTree<KeyType, ValueType>::rebalance(KeyType insertedKey) {
+    int balance = root->getBalance();
+
+    if (balance > 1) {
+        if (insertedKey < root->leftChild->key) {
+            root = rotateRight(root);  // left-left
+        } else {
+            root->leftChild = rotateLeft(root->leftChild);
+            root = rotateRight(root);  // left-right
+        }
+    }
+
+    if (balance < -1) {
+        if (insertedKey > root->rightChild->key) {
+            root = rotateLeft(root);  // right-right
+        } else {
+            root->rightChild = rotateRight(root->rightChild);
+            root = rotateLeft(root);  // right-left
+        }
+    }
+}
+
+template<typename KeyType, typename ValueType>
+AVLNode<KeyType, ValueType> *AVLTree<KeyType, ValueType>::rotateLeft(AVLNode<KeyType, ValueType> *rotationRoot) {
+    auto pivot = rotationRoot->rightChild;
+    auto shiftedSubtree = pivot->leftChild;
+    pivot->leftChild = rotationRoot;
+    rotationRoot->rightChild = shiftedSubtree;
+    return pivot;
+}
+
+template<typename KeyType, typename ValueType>
+AVLNode<KeyType, ValueType> *AVLTree<KeyType, ValueType>::rotateRight(AVLNode<KeyType, ValueType> *rotationRoot) {
+    auto pivot = rotationRoot->leftChild;  // Always not null
+    auto shiftedSubtree = pivot->rightChild;
+    pivot->rightChild = rotationRoot;
+    rotationRoot->leftChild = shiftedSubtree;
+    return pivot;
+}
 
 
 template<typename KeyType, typename ValueType>
@@ -182,7 +227,7 @@ void AVLTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &va
             AVLNode<KeyType, ValueType>::nodeHeight(root->leftChild),
             AVLNode<KeyType, ValueType>::nodeHeight(root->rightChild)
     );
-    int balance = root->getBalance();
+    rebalance(key);
 }
 
 template<typename KeyType, typename ValueType>
