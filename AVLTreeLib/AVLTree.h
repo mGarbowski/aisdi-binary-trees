@@ -246,7 +246,7 @@ void AVLTree<KeyType, ValueType>::rebalance(KeyType insertedKey) {
         if (insertedKey < root->leftChild->key) {
             root = rotateRight(root);  // left-left
         } else {
-            root->leftChild = rotateLeft(root->leftChild);
+            rotateLeft(root->leftChild);
             root = rotateRight(root);  // left-right
         }
     }
@@ -255,7 +255,7 @@ void AVLTree<KeyType, ValueType>::rebalance(KeyType insertedKey) {
         if (insertedKey > root->rightChild->key) {
             root = rotateLeft(root);  // right-right
         } else {
-            root->rightChild = rotateRight(root->rightChild);
+            rotateRight(root->rightChild);
             root = rotateLeft(root);  // right-left
         }
     }
