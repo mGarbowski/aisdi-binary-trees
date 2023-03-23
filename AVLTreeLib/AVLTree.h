@@ -145,19 +145,53 @@ void AVLTree<KeyType, ValueType>::rebalance(KeyType insertedKey) {
 
 template<typename KeyType, typename ValueType>
 AVLNode<KeyType, ValueType> *AVLTree<KeyType, ValueType>::rotateLeft(AVLNode<KeyType, ValueType> *rotationRoot) {
+    auto rootParent = rotationRoot->parent;
     auto pivot = rotationRoot->rightChild;
     auto shiftedSubtree = pivot->leftChild;
+
     pivot->leftChild = rotationRoot;
+    rotationRoot->parent = pivot;
     rotationRoot->rightChild = shiftedSubtree;
+
+    if (shiftedSubtree != nullptr) {
+        shiftedSubtree->parent = rotationRoot;
+    }
+
+    if (rootParent != nullptr) {
+        if (rotationRoot == rootParent->leftChild) {
+            rootParent->leftChild = pivot;
+        } else {
+            rootParent->rightChild = pivot;
+        }
+    }
+
+    rotationRoot->height -= 2;
     return pivot;
 }
 
 template<typename KeyType, typename ValueType>
 AVLNode<KeyType, ValueType> *AVLTree<KeyType, ValueType>::rotateRight(AVLNode<KeyType, ValueType> *rotationRoot) {
+    auto rootParent = rotationRoot->parent;
     auto pivot = rotationRoot->leftChild;  // Always not null
     auto shiftedSubtree = pivot->rightChild;
+
     pivot->rightChild = rotationRoot;
+    rotationRoot->parent = pivot;
     rotationRoot->leftChild = shiftedSubtree;
+
+    if (shiftedSubtree != nullptr) {
+        shiftedSubtree->parent = rotationRoot;
+    }
+
+    if (rootParent != nullptr) {
+        if (rotationRoot == rootParent->leftChild) {
+            rootParent->leftChild = pivot;
+        } else {
+            rootParent->rightChild = pivot;
+        }
+    }
+
+    rotationRoot->height -= 2;
     return pivot;
 }
 
