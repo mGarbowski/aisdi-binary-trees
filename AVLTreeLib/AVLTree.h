@@ -6,6 +6,14 @@
 #include <ostream>
 #include <iomanip>
 
+/**
+ * Node of an AVL tree
+ *
+ * Stores pointer to the node's parent
+ *
+ * @tparam KeyType type of keys used for comparison
+ * @tparam ValueType type of values
+ */
 template<typename KeyType, typename ValueType>
 class AVLNode {
 public:
@@ -16,16 +24,51 @@ public:
     AVLNode *rightChild;
     AVLNode *parent;
 
+    /**
+     * Initialize node with no parent
+     * @param key key
+     * @param value value
+     */
     AVLNode(KeyType key, const ValueType &value);
 
+    /**
+     * Initialize node with given parent
+     *
+     * @param key key
+     * @param value value
+     * @param parent node's parent node
+     */
     AVLNode(KeyType key, const ValueType &value, AVLNode *parent);
 
+    /**
+     * Difference of subtree heights (left - right)
+     *
+     * Value in range [-1, 1] (inclusive) corresponds to a balanced tree
+     *
+     * @return node's balance factor
+     */
     int getBalance() const;
 
+    /**
+     * Default string representation of a node [<key>,<value>]
+     *
+     * @return string representation of a node [<key>,<value>]
+     */
     std::string toString() const;
 
+    /**
+     * Utility for generating string representation with given separator after (like " ")
+     * @param separator
+     * @return
+     */
     std::string toString(std::string separator) const;
 
+    /**
+     * Utility for accessing node's height, null safe
+     *
+     * @param node root node of a tree
+     * @return height of the subtree with given root (0 for nullptr)
+     */
     static int nodeHeight(AVLNode<KeyType, ValueType> *node);
 };
 
