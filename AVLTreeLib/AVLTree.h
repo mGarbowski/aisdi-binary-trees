@@ -150,6 +150,7 @@ AVLNode<KeyType, ValueType> *AVLTree<KeyType, ValueType>::rotateLeft(AVLNode<Key
     auto shiftedSubtree = pivot->leftChild;
 
     pivot->leftChild = rotationRoot;
+    pivot->parent = rootParent;
     rotationRoot->parent = pivot;
     rotationRoot->rightChild = shiftedSubtree;
 
@@ -176,6 +177,7 @@ AVLNode<KeyType, ValueType> *AVLTree<KeyType, ValueType>::rotateRight(AVLNode<Ke
     auto shiftedSubtree = pivot->rightChild;
 
     pivot->rightChild = rotationRoot;
+    pivot->parent = rootParent;
     rotationRoot->parent = pivot;
     rotationRoot->leftChild = shiftedSubtree;
 
