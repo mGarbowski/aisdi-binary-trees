@@ -219,7 +219,7 @@ public:
      * @param key key mapped to searched value
      * @return pointer to the value or nullptr if not found
      */
-    ValueType *find(KeyType const &key);
+    ValueType *find(KeyType const &key) const;
 
     /**
      * String representation of the tree in pre-order traversal
@@ -264,7 +264,7 @@ void AVLTree<KeyType, ValueType>::rebalance(KeyType insertedKey) {
 template<typename KeyType, typename ValueType>
 AVLNode<KeyType, ValueType> *AVLTree<KeyType, ValueType>::rotateLeft(AVLNode<KeyType, ValueType> *rotationRoot) {
     auto rootParent = rotationRoot->parent;
-    auto pivot = rotationRoot->rightChild;
+    auto pivot = rotationRoot->rightChild;  // Always not null
     auto shiftedSubtree = pivot->leftChild;
 
     pivot->leftChild = rotationRoot;
@@ -387,7 +387,7 @@ void AVLTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &va
 }
 
 template<typename KeyType, typename ValueType>
-ValueType *AVLTree<KeyType, ValueType>::find(const KeyType &key) {
+ValueType *AVLTree<KeyType, ValueType>::find(const KeyType &key) const {
     if (root == nullptr) {
         return nullptr;
     }
