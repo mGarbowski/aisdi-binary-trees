@@ -14,7 +14,6 @@ FetchContent_MakeAvailable(googletest)
 
 set(AVL_LIBRARY_SOURCES
         AVLTreeLib/AVLTree.h
-        AVLTreeLib/AVLTreeLib.cpp
         benchmark/benchmark.h)
 
 set(BST_LIBRARY_SOURCES
