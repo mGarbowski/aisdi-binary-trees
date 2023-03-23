@@ -11,7 +11,7 @@ class AVLNode {
 public:
     KeyType key;
     ValueType *value;
-    int balanceCoefficient;
+    int height;
     AVLNode *leftChild;
     AVLNode *rightChild;
     AVLNode *parent;
@@ -20,10 +20,28 @@ public:
 
     AVLNode(KeyType key, const ValueType &value, AVLNode *parent);
 
+    int getBalance() const;
+
     std::string toString() const;
 
     std::string toString(std::string separator) const;
+
+    static int nodeHeight(AVLNode<KeyType, ValueType> *node);
 };
+
+template<typename KeyType, typename ValueType>
+int AVLNode<KeyType, ValueType>::nodeHeight(AVLNode<KeyType, ValueType> *node) {
+    if (node == nullptr) {
+        return 0;
+    }
+
+    return node->height;
+}
+
+template<typename KeyType, typename ValueType>
+int AVLNode<KeyType, ValueType>::getBalance() const {
+    return nodeHeight(leftChild) - nodeHeight(rightChild);
+}
 
 template<typename KeyType, typename ValueType>
 AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value) {
@@ -34,7 +52,7 @@ AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value) {
     parent = nullptr;
     leftChild = nullptr;
     rightChild = nullptr;
-    balanceCoefficient = 0;
+    height = 1;
 }
 
 template<typename KeyType, typename ValueType>
@@ -46,7 +64,7 @@ AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value, AVLNod
     this->parent = parent;
     leftChild = nullptr;
     rightChild = nullptr;
-    balanceCoefficient = 0;
+    height = 1;
 }
 
 template<typename KeyType, typename ValueType>
@@ -79,6 +97,7 @@ private:
     void print(StreamType &stream, int indent, std::string prefix) const;
 
     static std::string indentWhitespace(int spaces);
+
 public:
 
     AVLTree();
@@ -94,6 +113,7 @@ public:
     template<typename StreamType>
     void print(StreamType &stream) const;
 };
+
 
 template<typename KeyType, typename ValueType>
 std::string AVLTree<KeyType, ValueType>::indentWhitespace(int spaces) {
@@ -134,26 +154,35 @@ void AVLTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &va
         return;
     }
 
+    // Replace existing key, no need to rebalance
+    if (key == root->key) {
+        auto v = root->value;
+        *v = value;
+        return;
+    }
+
+    // Insert recursively and rebalance if needed
     if (key < root->key) {
         if (root->leftChild == nullptr) {
             root->leftChild = new AVLNode<KeyType, ValueType>(key, value, root);
         } else {
             this->leftSubtree().insert(key, value);
         }
-        root->balanceCoefficient++;
 
-    } else if (key > root->key) {
+    } else {
         if (root->rightChild == nullptr) {
             root->rightChild = new AVLNode<KeyType, ValueType>(key, value, root);
         } else {
             this->rightSubtree().insert(key, value);
         }
-        root->balanceCoefficient--;
-
-    } else {
-        auto v = root->value;
-        *v = value;
     }
+
+
+    root->height = 1 + std::max(
+            AVLNode<KeyType, ValueType>::nodeHeight(root->leftChild),
+            AVLNode<KeyType, ValueType>::nodeHeight(root->rightChild)
+    );
+    int balance = root->getBalance();
 }
 
 template<typename KeyType, typename ValueType>
