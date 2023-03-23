@@ -30,20 +30,6 @@ public:
 };
 
 template<typename KeyType, typename ValueType>
-int AVLNode<KeyType, ValueType>::nodeHeight(AVLNode<KeyType, ValueType> *node) {
-    if (node == nullptr) {
-        return 0;
-    }
-
-    return node->height;
-}
-
-template<typename KeyType, typename ValueType>
-int AVLNode<KeyType, ValueType>::getBalance() const {
-    return nodeHeight(leftChild) - nodeHeight(rightChild);
-}
-
-template<typename KeyType, typename ValueType>
 AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value) {
     this->key = key;
     auto *valuePtr = new ValueType();
@@ -68,6 +54,11 @@ AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value, AVLNod
 }
 
 template<typename KeyType, typename ValueType>
+int AVLNode<KeyType, ValueType>::getBalance() const {
+    return nodeHeight(leftChild) - nodeHeight(rightChild);
+}
+
+template<typename KeyType, typename ValueType>
 std::string AVLNode<KeyType, ValueType>::toString() const {
     return this->toString(std::string());
 }
@@ -79,46 +70,146 @@ std::string AVLNode<KeyType, ValueType>::toString(std::string separator) const {
     return stringStream.str();
 }
 
+template<typename KeyType, typename ValueType>
+int AVLNode<KeyType, ValueType>::nodeHeight(AVLNode<KeyType, ValueType> *node) {
+    if (node == nullptr) {
+        return 0;
+    }
 
+    return node->height;
+}
+
+
+/**
+ * Generic implementation of AVL tree - self balancing binary search tree with unique keys.
+ *
+ * Tree maintains the invariant that each node has a balance factor (left child height - right child height)
+ * in range [-1, 1] inclusive
+ *
+ * @tparam KeyType type of the keys
+ * @tparam ValueType type of the values
+ */
 template<typename KeyType, typename ValueType>
 class AVLTree {
 private:
-    static const auto PRINT_NEST_INDENT = 4;
-
+    /**
+     * Root node of the tree
+     */
     AVLNode<KeyType, ValueType> *root;
 
+    /**
+     * Alternative constructor for creating subtrees
+     * @param root root node of the tree
+     */
     explicit AVLTree(AVLNode<KeyType, ValueType> *root);
 
+    /**
+     * Get left subtree
+     * @return tree with current root's left child as the root node
+     */
     AVLTree<KeyType, ValueType> leftSubtree() const;
 
+    /**
+     * Get right subtree
+     * @return tree with current root's right child as the root node
+     */
     AVLTree<KeyType, ValueType> rightSubtree() const;
 
+    /**
+     * Restore AVL property - each node has balance factor in range [-1, 1] (inclusive)
+     * @param insertedKey key from the most recent insertion that may have violated AVL property
+     */
+    void rebalance(KeyType insertedKey);
+
+    /**
+     * Recursively print subtree on given indentation level
+     *
+     * @tparam StreamType type of the output stream
+     * @param stream output stream
+     * @param indent number of spaces
+     * @param prefix prefix inserted before node (Left/Right)
+     */
     template<typename StreamType>
     void print(StreamType &stream, int indent, std::string prefix) const;
 
+    /**
+     * Get string made of given number of spaces
+     * utility for displaying trees
+     *
+     * @param spaces number of spaces
+     * @return string made of given number of spaces
+     */
     static std::string indentWhitespace(int spaces);
 
+    /**
+     * Number of spaces per nesting level when displaying tree
+     */
+    static const auto PRINT_NEST_INDENT = 4;
+
+    /**
+     * Perform right rotation of a subtree around given root node
+     *
+     * @param rotationRoot root node of the subtree to rotate
+     * @return new root node of the subtree after rotation
+     */
     static AVLNode<KeyType, ValueType> *rotateRight(AVLNode<KeyType, ValueType> *rotationRoot);
 
+    /**
+     * Perform left rotation of a subtree aroung given root node
+     *
+     * @param rotationRoot root node of the subtree to rotate
+     * @return new root node of the subtree after rotation
+     */
     static AVLNode<KeyType, ValueType> *rotateLeft(AVLNode<KeyType, ValueType> *rotationRoot);
-
-    void rebalance(KeyType insertedKey);
 
 public:
 
+    /**
+     * Initialize empty tree
+     */
     AVLTree();
 
+    /**
+     * Get number of elements stored in the tree
+     *
+     * @return number of elements stored in the tree
+     */
     size_t size() const;
 
+    /**
+     * Insert key-value pair into the tree
+     * If the key already exists, its corresponding value gets replaced
+     * Maintains AVL property - each node has a balance factor in range [-1, 1] (inclusive)
+     *
+     * @param key key mapping to the value
+     * @param value mapped value
+     */
     void insert(KeyType const &key, ValueType const &value);
 
+    /**
+     * Find value related to the given key
+     *
+     * @param key key mapped to searched value
+     * @return pointer to the value or nullptr if not found
+     */
     ValueType *find(KeyType const &key);
 
+    /**
+     * String representation of the tree in pre-order traversal
+     * @return pre-order traversal string
+     */
     std::string toString() const;
 
+    /**
+     * Display tree (pre-order traversal) to a stream
+     *
+     * @tparam StreamType type of output stream
+     * @param stream output stream
+     */
     template<typename StreamType>
     void print(StreamType &stream) const;
 };
+
 
 template<typename KeyType, typename ValueType>
 void AVLTree<KeyType, ValueType>::rebalance(KeyType insertedKey) {
