@@ -99,7 +99,9 @@ private:
     static std::string indentWhitespace(int spaces);
 
     static AVLNode<KeyType, ValueType> *rotateRight(AVLNode<KeyType, ValueType> *rotationRoot);
+
     static AVLNode<KeyType, ValueType> *rotateLeft(AVLNode<KeyType, ValueType> *rotationRoot);
+
     void rebalance(KeyType insertedKey);
 
 public:
@@ -108,7 +110,7 @@ public:
 
     size_t size() const;
 
-    void insert(KeyType const &key, ValueType const &value);  // Should not calculate height
+    void insert(KeyType const &key, ValueType const &value);
 
     ValueType *find(KeyType const &key);
 
