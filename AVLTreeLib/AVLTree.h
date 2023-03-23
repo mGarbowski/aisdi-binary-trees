@@ -24,12 +24,6 @@ public:
     AVLNode *rightChild;
     AVLNode *parent;
 
-    /**
-     * Initialize node with no parent
-     * @param key key
-     * @param value value
-     */
-    AVLNode(KeyType key, const ValueType &value);
 
     /**
      * Initialize node with given parent
@@ -38,7 +32,7 @@ public:
      * @param value value
      * @param parent node's parent node
      */
-    AVLNode(KeyType key, const ValueType &value, AVLNode *parent);
+    AVLNode(KeyType key, const ValueType &value, AVLNode *parent = nullptr);
 
     /**
      * Difference of subtree heights (left - right)
@@ -72,28 +66,18 @@ public:
     static int nodeHeight(AVLNode<KeyType, ValueType> *node);
 };
 
-template<typename KeyType, typename ValueType>
-AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value) {
-    this->key = key;
-    auto *valuePtr = new ValueType();
-    *valuePtr = value;
-    this->value = valuePtr;
-    parent = nullptr;
-    leftChild = nullptr;
-    rightChild = nullptr;
-    height = 1;
-}
 
 template<typename KeyType, typename ValueType>
 AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value, AVLNode *parent) {
+    height = 1;
+    this->parent = parent;
+    this->leftChild = nullptr;
+    this->rightChild = nullptr;
     this->key = key;
+
     auto *valuePtr = new ValueType();
     *valuePtr = value;
     this->value = valuePtr;
-    this->parent = parent;
-    leftChild = nullptr;
-    rightChild = nullptr;
-    height = 1;
 }
 
 template<typename KeyType, typename ValueType>
