@@ -24,7 +24,7 @@ public:
     AVLNode *rightChild;
     AVLNode *parent;
 
-
+    // TODO: Implement destructor
     /**
      * Initialize node with given parent
      *
@@ -195,6 +195,8 @@ public:
      * Initialize empty tree
      */
     AVLTree();
+
+    // TODO: implement destructor
 
     /**
      * Get number of elements stored in the tree
