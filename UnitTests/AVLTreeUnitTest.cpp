@@ -131,8 +131,7 @@ namespace AVLTreeUnitTest {
 
     TEST(AVLTree, ConstructEmpty) {
         AVLTree<int, int> tree;
-        std::string expected = "";
-        ASSERT_EQ(expected, tree.toString());
+        ASSERT_EQ("", tree.toString());
     }
 
     TEST(AVLTree, insertToEmpty) {
@@ -435,8 +434,7 @@ namespace AVLTreeUnitTest {
         std::ostringstream stream;
         tree.print(stream);
         auto s = stream.str();
-        std::string s1 = "";
-        ASSERT_EQ(s1, s);
+        ASSERT_EQ("", s);
     }
 
     TEST(AVLTree, print1) {
