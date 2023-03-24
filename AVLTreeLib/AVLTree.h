@@ -201,8 +201,12 @@ public:
      */
     AVLTree();
 
-    // TODO: implement destructor
-//    ~AVLTree();
+    /**
+     * Destroy tree
+     *
+     * Destroys all nodes recursively
+     */
+    ~AVLTree();
 
     /**
      * Get number of elements stored in the tree
@@ -246,13 +250,10 @@ public:
 };
 
 
-
-
-
-//template<typename KeyType, typename ValueType>
-//AVLTree<KeyType, ValueType>::~AVLTree() {
-//    delete root;
-//}
+template<typename KeyType, typename ValueType>
+AVLTree<KeyType, ValueType>::~AVLTree() {
+    delete root;
+}
 
 
 template<typename KeyType, typename ValueType>
