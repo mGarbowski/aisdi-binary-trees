@@ -24,6 +24,9 @@ public:
     AVLNode *rightChild;
     AVLNode *parent;
 
+    /**
+     * Destroy node and its children recursively
+     */
     ~AVLNode();
 
     /**
