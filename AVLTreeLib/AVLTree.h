@@ -287,26 +287,31 @@ AVLTree<KeyType, ValueType>::~AVLTree() {
 
 template<typename KeyType, typename ValueType>
 void AVLTree<KeyType, ValueType>::rebalance(KeyType insertedKey, AVLNode<KeyType, ValueType> *subRoot) {
+    bool isRootRotation = (subRoot == root);
     int balance = subRoot->getBalance();
 
     if (balance > 1) {
         if (insertedKey < subRoot->leftChild->key) {
-            rotateRight(subRoot);  // left-left
+            subRoot = rotateRight(subRoot);  // left-left
         } else {
             rotateLeft(subRoot->leftChild);
-            rotateRight(subRoot);  // left-right
+            subRoot = rotateRight(subRoot);  // left-right
         }
     }
 
     if (balance < -1) {
         if (insertedKey > subRoot->rightChild->key) {
-            rotateLeft(subRoot);  // right-right
+            subRoot = rotateLeft(subRoot);  // right-right
         } else {
             rotateRight(subRoot->rightChild);
-            rotateLeft(subRoot);  // right-left
+            subRoot = rotateLeft(subRoot);  // right-left
         }
     }
 
+    // Update tree's root if it changed due to rotations
+    if (isRootRotation) {
+        root = subRoot;
+    }
 }
 
 template<typename KeyType, typename ValueType>
