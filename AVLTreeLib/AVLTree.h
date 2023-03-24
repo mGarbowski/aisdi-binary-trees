@@ -128,23 +128,24 @@ private:
      */
     AVLNode<KeyType, ValueType> *root;
 
-    /**
-     * Alternative constructor for creating subtrees
-     * @param root root node of the tree
-     */
-    explicit AVLTree(AVLNode<KeyType, ValueType> *root);
 
     /**
-     * Get left subtree
-     * @return tree with current root's left child as the root node
+     * Insert given key-value pair into subtree with subRoot as its root node
+     *
+     * @param key key to insert
+     * @param value value to insert
+     * @param subRoot root of the subtree to insert into
      */
-    AVLTree<KeyType, ValueType> leftSubtree() const;
+    void insertIntoSubtree(KeyType key, ValueType value, AVLNode<KeyType, ValueType> *subRoot);
 
     /**
-     * Get right subtree
-     * @return tree with current root's right child as the root node
+     * Find value associated with key in subtree with subRoot as its root node
+     * @param key searched key
+     * @param subRoot root node of the scanned subtree
+     * @return pointer to value associated with key or nullptr if not found
      */
-    AVLTree<KeyType, ValueType> rightSubtree() const;
+    ValueType *findInSubtree(KeyType key, AVLNode<KeyType, ValueType> *subRoot) const;
+
 
     /**
      * Restore AVL property - each node has balance factor in range [-1, 1] (inclusive)
@@ -243,6 +244,10 @@ public:
     template<typename StreamType>
     void print(StreamType &stream) const;
 };
+
+
+
+
 
 //template<typename KeyType, typename ValueType>
 //AVLTree<KeyType, ValueType>::~AVLTree() {
@@ -344,19 +349,48 @@ AVLTree<KeyType, ValueType>::AVLTree() {
 
 
 template<typename KeyType, typename ValueType>
-AVLTree<KeyType, ValueType>::AVLTree(AVLNode<KeyType, ValueType> *root) {
-    this->root = root;
+size_t AVLTree<KeyType, ValueType>::size() const {
+//    if (root == nullptr) {
+//        return 0;
+//    }
+//
+//    auto left = this->leftSubtree().size();
+//    auto right = this->rightSubtree().size();
+//    return left + 1 + right;
+    return 0;
 }
 
 template<typename KeyType, typename ValueType>
-size_t AVLTree<KeyType, ValueType>::size() const {
-    if (root == nullptr) {
-        return 0;
+void
+AVLTree<KeyType, ValueType>::insertIntoSubtree(KeyType key, ValueType value, AVLNode<KeyType, ValueType> *subRoot) {
+    // Replace existing key, no need to rebalance
+    if (key == subRoot->key) {
+        subRoot->value = value;
+        return;
     }
 
-    auto left = this->leftSubtree().size();
-    auto right = this->rightSubtree().size();
-    return left + 1 + right;
+    // Insert recursively and rebalance if needed
+    if (key < subRoot->key) {
+        if (subRoot->leftChild == nullptr) {
+            subRoot->leftChild = new AVLNode<KeyType, ValueType>(key, value, subRoot);
+        } else {
+            insertIntoSubtree(key, value, subRoot->leftChild);
+        }
+
+    } else {
+        if (subRoot->rightChild == nullptr) {
+            subRoot->rightChild = new AVLNode<KeyType, ValueType>(key, value, subRoot);
+        } else {
+            insertIntoSubtree(key, value, subRoot->rightChild);
+        }
+    }
+
+
+    subRoot->height = 1 + std::max(
+            AVLNode<KeyType, ValueType>::nodeHeight(subRoot->leftChild),
+            AVLNode<KeyType, ValueType>::nodeHeight(subRoot->rightChild)
+    );
+    rebalance(key);
 }
 
 template<typename KeyType, typename ValueType>
@@ -367,66 +401,45 @@ void AVLTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &va
         return;
     }
 
-    // Replace existing key, no need to rebalance
-    if (key == root->key) {
-        root->value = value;
-        return;
-    }
-
-    // Insert recursively and rebalance if needed
-    if (key < root->key) {
-        if (root->leftChild == nullptr) {
-            root->leftChild = new AVLNode<KeyType, ValueType>(key, value, root);
-        } else {
-            this->leftSubtree().insert(key, value);
-        }
-
-    } else {
-        if (root->rightChild == nullptr) {
-            root->rightChild = new AVLNode<KeyType, ValueType>(key, value, root);
-        } else {
-            this->rightSubtree().insert(key, value);
-        }
-    }
-
-
-    root->height = 1 + std::max(
-            AVLNode<KeyType, ValueType>::nodeHeight(root->leftChild),
-            AVLNode<KeyType, ValueType>::nodeHeight(root->rightChild)
-    );
-    rebalance(key);
+    insertIntoSubtree(key, value, root);
 }
 
 template<typename KeyType, typename ValueType>
-ValueType *AVLTree<KeyType, ValueType>::find(const KeyType &key) const {
-    if (root == nullptr) {
+ValueType *AVLTree<KeyType, ValueType>::findInSubtree(KeyType key, AVLNode<KeyType, ValueType> *subRoot) const {
+    if (subRoot == nullptr) {
         return nullptr;
     }
 
-    if (key < root->key) {
-        return this->leftSubtree().find(key);
-    } else if (key > root->key) {
-        return this->rightSubtree().find(key);
+    if (key < subRoot->key) {
+        return findInSubtree(key, subRoot->leftChild);
+    } else if (key > subRoot->key) {
+        return findInSubtree(key, subRoot->rightChild);
     } else {
         auto valuePtr = new ValueType();
-        *valuePtr = root->value;
+        *valuePtr = subRoot->value;
         return valuePtr;
     }
 }
 
 template<typename KeyType, typename ValueType>
+ValueType *AVLTree<KeyType, ValueType>::find(const KeyType &key) const {
+    return findInSubtree(key, root);
+}
+
+template<typename KeyType, typename ValueType>
 std::string AVLTree<KeyType, ValueType>::toString() const {
-    if (root == nullptr) {
-        return "";
-    }
-
-    auto visit = root->toString();
-    auto left = this->leftSubtree().toString();
-    auto right = this->rightSubtree().toString();
-
-    std::ostringstream stringStream;
-    stringStream << "(" << visit << "," << left << "," << right << ")";
-    return stringStream.str();
+//    if (root == nullptr) {
+//        return "";
+//    }
+//
+//    auto visit = root->toString();
+//    auto left = this->leftSubtree().toString();
+//    auto right = this->rightSubtree().toString();
+//
+//    std::ostringstream stringStream;
+//    stringStream << "(" << visit << "," << left << "," << right << ")";
+//    return stringStream.str();
+    return "";
 }
 
 template<typename KeyType, typename ValueType>
@@ -438,26 +451,16 @@ void AVLTree<KeyType, ValueType>::print(StreamType &stream) const {
 template<typename KeyType, typename ValueType>
 template<typename StreamType>
 void AVLTree<KeyType, ValueType>::print(StreamType &stream, int indent, std::string prefix) const {
-    if (root == nullptr) {
-        return;
-    }
-    stream << indentWhitespace(indent) << prefix << root->toString(" ") << "\n";
-    if (root->leftChild != nullptr) {
-        this->leftSubtree().print(stream, indent + PRINT_NEST_INDENT, "L: ");
-    }
-    if (root->rightChild != nullptr) {
-        this->rightSubtree().print(stream, indent + PRINT_NEST_INDENT, "R: ");
-    }
-}
-
-template<typename KeyType, typename ValueType>
-AVLTree<KeyType, ValueType> AVLTree<KeyType, ValueType>::leftSubtree() const {
-    return AVLTree<KeyType, ValueType>(root->leftChild);
-}
-
-template<typename KeyType, typename ValueType>
-AVLTree<KeyType, ValueType> AVLTree<KeyType, ValueType>::rightSubtree() const {
-    return AVLTree<KeyType, ValueType>(root->rightChild);
+//    if (root == nullptr) {
+//        return;
+//    }
+//    stream << indentWhitespace(indent) << prefix << root->toString(" ") << "\n";
+//    if (root->leftChild != nullptr) {
+//        this->leftSubtree().print(stream, indent + PRINT_NEST_INDENT, "L: ");
+//    }
+//    if (root->rightChild != nullptr) {
+//        this->rightSubtree().print(stream, indent + PRINT_NEST_INDENT, "R: ");
+//    }
 }
 
 
