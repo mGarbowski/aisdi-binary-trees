@@ -158,11 +158,20 @@ private:
      *
      * @tparam StreamType type of the output stream
      * @param stream output stream
+     * @param subRoot root node of the subtree to print
      * @param indent number of spaces
      * @param prefix prefix inserted before node (Left/Right)
      */
     template<typename StreamType>
-    void print(StreamType &stream, int indent, std::string prefix) const;
+    void printSubtree(StreamType &stream, AVLNode<KeyType, ValueType> *subRoot, int indent, std::string prefix) const;
+
+    /**
+     * Return string representation of the subtree in pre-order traversal
+     *
+     * @param subRoot root node of the subtree
+     * @return string representation in pre-order traversal
+     */
+    std::string toStringSubtree(AVLNode<KeyType, ValueType> *subRoot) const;
 
     /**
      * Get string made of given number of spaces
@@ -428,40 +437,45 @@ ValueType *AVLTree<KeyType, ValueType>::find(const KeyType &key) const {
 }
 
 template<typename KeyType, typename ValueType>
+std::string AVLTree<KeyType, ValueType>::toStringSubtree(AVLNode<KeyType, ValueType> *subRoot) const {
+    if (subRoot == nullptr) {
+        return "";
+    }
+
+    auto visit = subRoot->toString();
+    auto left = toStringSubtree(subRoot->leftChild);
+    auto right = toStringSubtree(subRoot->rightChild);
+
+    std::ostringstream stringStream;
+    stringStream << "(" << visit << "," << left << "," << right << ")";
+    return stringStream.str();
+}
+
+template<typename KeyType, typename ValueType>
 std::string AVLTree<KeyType, ValueType>::toString() const {
-//    if (root == nullptr) {
-//        return "";
-//    }
-//
-//    auto visit = root->toString();
-//    auto left = this->leftSubtree().toString();
-//    auto right = this->rightSubtree().toString();
-//
-//    std::ostringstream stringStream;
-//    stringStream << "(" << visit << "," << left << "," << right << ")";
-//    return stringStream.str();
-    return "";
+    return toStringSubtree(root);
+}
+
+template<typename KeyType, typename ValueType>
+template<typename StreamType>
+void AVLTree<KeyType, ValueType>::printSubtree(StreamType &stream, AVLNode<KeyType, ValueType> *subRoot, int indent,
+                                               std::string prefix) const {
+    if (subRoot == nullptr) {
+        return;
+    }
+    stream << indentWhitespace(indent) << prefix << subRoot->toString(" ") << "\n";
+    if (subRoot->leftChild != nullptr) {
+        printSubtree(stream, subRoot->leftChild, indent + PRINT_NEST_INDENT, "L: ");
+    }
+    if (subRoot->rightChild != nullptr) {
+        printSubtree(stream, subRoot->rightChild, indent + PRINT_NEST_INDENT, "R: ");
+    }
 }
 
 template<typename KeyType, typename ValueType>
 template<typename StreamType>
 void AVLTree<KeyType, ValueType>::print(StreamType &stream) const {
-    this->print(stream, 0, "");
-}
-
-template<typename KeyType, typename ValueType>
-template<typename StreamType>
-void AVLTree<KeyType, ValueType>::print(StreamType &stream, int indent, std::string prefix) const {
-//    if (root == nullptr) {
-//        return;
-//    }
-//    stream << indentWhitespace(indent) << prefix << root->toString(" ") << "\n";
-//    if (root->leftChild != nullptr) {
-//        this->leftSubtree().print(stream, indent + PRINT_NEST_INDENT, "L: ");
-//    }
-//    if (root->rightChild != nullptr) {
-//        this->rightSubtree().print(stream, indent + PRINT_NEST_INDENT, "R: ");
-//    }
+    printSubtree(stream, root, 0, "");
 }
 
 
