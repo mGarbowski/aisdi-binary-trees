@@ -19,10 +19,12 @@ class AVLNode {
 public:
     KeyType key;
     ValueType value;
-    int height;
+    int height{};
     AVLNode *leftChild;
     AVLNode *rightChild;
     AVLNode *parent;
+
+    AVLNode();
 
     /**
      * Destroy node and its children recursively
@@ -69,6 +71,11 @@ public:
      */
     static int nodeHeight(AVLNode<KeyType, ValueType> *node);
 };
+
+template<typename KeyType, typename ValueType>
+AVLNode<KeyType, ValueType>::AVLNode() {
+    height = 0;
+}
 
 template<typename KeyType, typename ValueType>
 AVLNode<KeyType, ValueType>::~AVLNode() {
@@ -151,10 +158,12 @@ private:
 
 
     /**
-     * Restore AVL property - each node has balance factor in range [-1, 1] (inclusive)
+     * Restore AVL property of a subtree - each node has balance factor in range [-1, 1] (inclusive)
+     *
      * @param insertedKey key from the most recent insertion that may have violated AVL property
+     * @param subRoot root node of the tree to rebalance
      */
-    void rebalance(KeyType insertedKey);
+    void rebalance(KeyType insertedKey, AVLNode<KeyType, ValueType> *subRoot);
 
     /**
      * Recursively print subtree on given indentation level
@@ -277,26 +286,27 @@ AVLTree<KeyType, ValueType>::~AVLTree() {
 
 
 template<typename KeyType, typename ValueType>
-void AVLTree<KeyType, ValueType>::rebalance(KeyType insertedKey) {
-    int balance = root->getBalance();
+void AVLTree<KeyType, ValueType>::rebalance(KeyType insertedKey, AVLNode<KeyType, ValueType> *subRoot) {
+    int balance = subRoot->getBalance();
 
     if (balance > 1) {
-        if (insertedKey < root->leftChild->key) {
-            root = rotateRight(root);  // left-left
+        if (insertedKey < subRoot->leftChild->key) {
+            rotateRight(subRoot);  // left-left
         } else {
-            rotateLeft(root->leftChild);
-            root = rotateRight(root);  // left-right
+            rotateLeft(subRoot->leftChild);
+            rotateRight(subRoot);  // left-right
         }
     }
 
     if (balance < -1) {
-        if (insertedKey > root->rightChild->key) {
-            root = rotateLeft(root);  // right-right
+        if (insertedKey > subRoot->rightChild->key) {
+            rotateLeft(subRoot);  // right-right
         } else {
-            rotateRight(root->rightChild);
-            root = rotateLeft(root);  // right-left
+            rotateRight(subRoot->rightChild);
+            rotateLeft(subRoot);  // right-left
         }
     }
+
 }
 
 template<typename KeyType, typename ValueType>
@@ -414,7 +424,7 @@ AVLTree<KeyType, ValueType>::insertIntoSubtree(KeyType key, ValueType value, AVL
             AVLNode<KeyType, ValueType>::nodeHeight(subRoot->leftChild),
             AVLNode<KeyType, ValueType>::nodeHeight(subRoot->rightChild)
     );
-    rebalance(key);
+    rebalance(key, subRoot);
 }
 
 template<typename KeyType, typename ValueType>
