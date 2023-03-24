@@ -18,13 +18,14 @@ template<typename KeyType, typename ValueType>
 class AVLNode {
 public:
     KeyType key;
-    ValueType *value;
+    ValueType value;
     int height;
     AVLNode *leftChild;
     AVLNode *rightChild;
     AVLNode *parent;
 
-    // TODO: Implement destructor
+    ~AVLNode();
+
     /**
      * Initialize node with given parent
      *
@@ -66,6 +67,12 @@ public:
     static int nodeHeight(AVLNode<KeyType, ValueType> *node);
 };
 
+template<typename KeyType, typename ValueType>
+AVLNode<KeyType, ValueType>::~AVLNode() {
+    delete leftChild;
+    delete rightChild;
+}
+
 
 template<typename KeyType, typename ValueType>
 AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value, AVLNode *parent) {
@@ -74,10 +81,7 @@ AVLNode<KeyType, ValueType>::AVLNode(KeyType key, const ValueType &value, AVLNod
     this->leftChild = nullptr;
     this->rightChild = nullptr;
     this->key = key;
-
-    auto *valuePtr = new ValueType();
-    *valuePtr = value;
-    this->value = valuePtr;
+    this->value = value;
 }
 
 template<typename KeyType, typename ValueType>
@@ -93,7 +97,7 @@ std::string AVLNode<KeyType, ValueType>::toString() const {
 template<typename KeyType, typename ValueType>
 std::string AVLNode<KeyType, ValueType>::toString(std::string separator) const {
     std::ostringstream stringStream;
-    stringStream << "[" << key << "," << separator << *value << "]";
+    stringStream << "[" << key << "," << separator << value << "]";
     return stringStream.str();
 }
 
@@ -197,6 +201,7 @@ public:
     AVLTree();
 
     // TODO: implement destructor
+//    ~AVLTree();
 
     /**
      * Get number of elements stored in the tree
@@ -238,6 +243,11 @@ public:
     template<typename StreamType>
     void print(StreamType &stream) const;
 };
+
+//template<typename KeyType, typename ValueType>
+//AVLTree<KeyType, ValueType>::~AVLTree() {
+//    delete root;
+//}
 
 
 template<typename KeyType, typename ValueType>
@@ -359,8 +369,7 @@ void AVLTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &va
 
     // Replace existing key, no need to rebalance
     if (key == root->key) {
-        auto v = root->value;
-        *v = value;
+        root->value = value;
         return;
     }
 
@@ -399,7 +408,9 @@ ValueType *AVLTree<KeyType, ValueType>::find(const KeyType &key) const {
     } else if (key > root->key) {
         return this->rightSubtree().find(key);
     } else {
-        return root->value;
+        auto valuePtr = new ValueType();
+        *valuePtr = root->value;
+        return valuePtr;
     }
 }
 
