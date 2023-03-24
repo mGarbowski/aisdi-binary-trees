@@ -23,7 +23,7 @@ private:
     /**
      * Node of an AVL tree
      *
-     * Stores pointer to the node's parent
+     * Stores key, value and pointers to the parent and children
      *
      * @tparam KeyType type of keys used for comparison
      * @tparam ValueType type of values
@@ -39,11 +39,6 @@ private:
 
 
         /**
-         * Destroy node and its children recursively
-         */
-        ~Node();
-
-        /**
          * Initialize node with given parent
          *
          * @param key key
@@ -51,6 +46,11 @@ private:
          * @param parent node's parent node
          */
         Node(KeyType key, ValueType const &value, Node *parent = nullptr);
+
+        /**
+         * Destroy node and its children recursively
+         */
+        ~Node();
 
         /**
          * Difference of subtree heights (left - right)
@@ -100,6 +100,36 @@ private:
     void insertIntoSubtree(KeyType const &key, ValueType const &value, Node *subRoot);
 
     /**
+     * Restore AVL property of a subtree - each node has balance factor in range [-1, 1] (inclusive)
+     *
+     * @param insertedKey key from the most recent insertion that may have violated AVL property
+     * @param subRoot root node of the tree to rebalance
+     */
+    void rebalance(KeyType const &insertedKey, Node *subRoot);
+
+
+    /**
+     * Number of spaces per nesting level when displaying tree
+     */
+    static const auto PRINT_NEST_INDENT = 4;
+
+    /**
+     * Perform left rotation of a subtree aroung given root node
+     *
+     * @param rotationRoot root node of the subtree to rotate
+     * @return new root node of the subtree after rotation
+     */
+    static Node *rotateLeft(Node *rotationRoot);
+
+    /**
+     * Perform right rotation of a subtree around given root node
+     *
+     * @param rotationRoot root node of the subtree to rotate
+     * @return new root node of the subtree after rotation
+     */
+    static Node *rotateRight(Node *rotationRoot);
+
+    /**
      * Find value associated with key in subtree with subRoot as its root node
      * @param key searched key
      * @param subRoot root node of the scanned subtree
@@ -107,14 +137,13 @@ private:
      */
     static ValueType *findInSubtree(KeyType const &key, Node const *subRoot);
 
-
     /**
-     * Restore AVL property of a subtree - each node has balance factor in range [-1, 1] (inclusive)
+     * Get number of elements stored in a subtree
      *
-     * @param insertedKey key from the most recent insertion that may have violated AVL property
-     * @param subRoot root node of the tree to rebalance
+     * @param subRoot root node of the subtree
+     * @return number of nodes in the subtree
      */
-    void rebalance(KeyType const &insertedKey, Node *subRoot);
+    static size_t sizeSubtree(Node const *subRoot);
 
     /**
      * Recursively print subtree on given indentation level
@@ -138,19 +167,6 @@ private:
     static std::string toStringSubtree(Node const *subRoot);
 
     /**
-     * Get number of elements stored in a subtree
-     *
-     * @param subRoot root node of the subtree
-     * @return number of nodes in the subtree
-     */
-    size_t sizeSubtree(Node const *subRoot) const;
-
-    /**
-     * Number of spaces per nesting level when displaying tree
-     */
-    static const auto PRINT_NEST_INDENT = 4;
-
-    /**
      * Get string made of given number of spaces
      * utility for displaying trees
      *
@@ -158,22 +174,6 @@ private:
      * @return string made of given number of spaces
      */
     static std::string indentWhitespace(int spaces);
-
-    /**
-     * Perform right rotation of a subtree around given root node
-     *
-     * @param rotationRoot root node of the subtree to rotate
-     * @return new root node of the subtree after rotation
-     */
-    static Node *rotateRight(Node *rotationRoot);
-
-    /**
-     * Perform left rotation of a subtree aroung given root node
-     *
-     * @param rotationRoot root node of the subtree to rotate
-     * @return new root node of the subtree after rotation
-     */
-    static Node *rotateLeft(Node *rotationRoot);
 
 
 public:
@@ -232,6 +232,61 @@ public:
 };
 
 template<typename KeyType, typename ValueType>
+AVLTree<KeyType, ValueType>::Node::Node(KeyType key, ValueType const &value, Node *parent) {
+    height = 1;
+    this->parent = parent;
+    this->leftChild = nullptr;
+    this->rightChild = nullptr;
+    this->key = key;
+    this->value = value;
+}
+
+
+template<typename KeyType, typename ValueType>
+AVLTree<KeyType, ValueType>::Node::~Node() {
+    delete leftChild;
+    delete rightChild;
+}
+
+
+template<typename KeyType, typename ValueType>
+int AVLTree<KeyType, ValueType>::Node::getBalance() const {
+    return nodeHeight(leftChild) - nodeHeight(rightChild);
+}
+
+
+template<typename KeyType, typename ValueType>
+std::string AVLTree<KeyType, ValueType>::Node::toString() const {
+    return this->toString("");
+}
+
+template<typename KeyType, typename ValueType>
+std::string AVLTree<KeyType, ValueType>::Node::toString(std::string const &separator) const {
+    std::ostringstream stringStream;
+    stringStream << "[" << key << "," << separator << value << "]";
+    return stringStream.str();
+}
+
+template<typename KeyType, typename ValueType>
+int AVLTree<KeyType, ValueType>::Node::nodeHeight(Node const *node) {
+    if (node == nullptr) {
+        return 0;
+    }
+
+    return node->height;
+}
+
+template<typename KeyType, typename ValueType>
+AVLTree<KeyType, ValueType>::AVLTree() {
+    root = nullptr;
+}
+
+template<typename KeyType, typename ValueType>
+AVLTree<KeyType, ValueType>::~AVLTree() {
+    delete root;
+}
+
+template<typename KeyType, typename ValueType>
 typename AVLTree<KeyType, ValueType>::Node *AVLTree<KeyType, ValueType>::rotateLeft(AVLTree::Node *rotationRoot) {
     auto rootParent = rotationRoot->parent;
     auto pivot = rotationRoot->rightChild;  // Always not null
@@ -257,7 +312,6 @@ typename AVLTree<KeyType, ValueType>::Node *AVLTree<KeyType, ValueType>::rotateL
     rotationRoot->height -= 2;
     return pivot;
 }
-
 
 template<typename KeyType, typename ValueType>
 typename AVLTree<KeyType, ValueType>::Node *AVLTree<KeyType, ValueType>::rotateRight(Node *rotationRoot) {
@@ -285,13 +339,6 @@ typename AVLTree<KeyType, ValueType>::Node *AVLTree<KeyType, ValueType>::rotateR
     rotationRoot->height -= 2;
     return pivot;
 }
-
-
-template<typename KeyType, typename ValueType>
-AVLTree<KeyType, ValueType>::~AVLTree() {
-    delete root;
-}
-
 
 template<typename KeyType, typename ValueType>
 void AVLTree<KeyType, ValueType>::rebalance(KeyType const &insertedKey, Node *subRoot) {
@@ -322,23 +369,8 @@ void AVLTree<KeyType, ValueType>::rebalance(KeyType const &insertedKey, Node *su
     }
 }
 
-
 template<typename KeyType, typename ValueType>
-std::string AVLTree<KeyType, ValueType>::indentWhitespace(int spaces) {
-    std::ostringstream ss;
-    for (int i = 0; i < spaces; ++i) {
-        ss << " ";
-    }
-    return ss.str();
-}
-
-template<typename KeyType, typename ValueType>
-AVLTree<KeyType, ValueType>::AVLTree() {
-    root = nullptr;
-}
-
-template<typename KeyType, typename ValueType>
-size_t AVLTree<KeyType, ValueType>::sizeSubtree(const Node *subRoot) const {
+size_t AVLTree<KeyType, ValueType>::sizeSubtree(const Node *subRoot) {
     if (subRoot == nullptr) {
         return 0;
     }
@@ -354,9 +386,7 @@ size_t AVLTree<KeyType, ValueType>::size() const {
 }
 
 template<typename KeyType, typename ValueType>
-void
-AVLTree<KeyType, ValueType>::insertIntoSubtree(KeyType const &key, ValueType const &value,
-                                               Node *subRoot) {
+void AVLTree<KeyType, ValueType>::insertIntoSubtree(KeyType const &key, ValueType const &value, Node *subRoot) {
     // Replace existing key, no need to rebalance
     if (key == subRoot->key) {
         subRoot->value = value;
@@ -399,8 +429,7 @@ void AVLTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &va
 }
 
 template<typename KeyType, typename ValueType>
-ValueType *
-AVLTree<KeyType, ValueType>::findInSubtree(KeyType const &key, Node const *subRoot) {
+ValueType *AVLTree<KeyType, ValueType>::findInSubtree(KeyType const &key, Node const *subRoot) {
     if (subRoot == nullptr) {
         return nullptr;
     }
@@ -436,16 +465,17 @@ std::string AVLTree<KeyType, ValueType>::toStringSubtree(Node const *subRoot) {
     return stringStream.str();
 }
 
+
 template<typename KeyType, typename ValueType>
 std::string AVLTree<KeyType, ValueType>::toString() const {
     return toStringSubtree(root);
 }
 
+
 template<typename KeyType, typename ValueType>
 template<typename StreamType>
-void
-AVLTree<KeyType, ValueType>::printSubtree(StreamType &stream, Node const *subRoot, int indent,
-                                          std::string const &prefix) {
+void AVLTree<KeyType, ValueType>::printSubtree(StreamType &stream, Node const *subRoot, int indent,
+                                               std::string const &prefix) {
     if (subRoot == nullptr) {
         return;
     }
@@ -458,59 +488,24 @@ AVLTree<KeyType, ValueType>::printSubtree(StreamType &stream, Node const *subRoo
     }
 }
 
+
 template<typename KeyType, typename ValueType>
 template<typename StreamType>
 void AVLTree<KeyType, ValueType>::print(StreamType &stream) const {
     printSubtree(stream, root, 0, "");
 }
 
+template<typename KeyType, typename ValueType>
+std::string AVLTree<KeyType, ValueType>::indentWhitespace(int spaces) {
+    std::ostringstream ss;
+    for (int i = 0; i < spaces; ++i) {
+        ss << " ";
+    }
+    return ss.str();
+}
 
 template<typename KeyType, typename ValueType>
 std::ostream &operator<<(std::ostream &stream, AVLTree<KeyType, ValueType> const &tree) {
     tree.print(stream);
     return stream;
-}
-
-
-template<typename KeyType, typename ValueType>
-AVLTree<KeyType, ValueType>::Node::~Node() {
-    delete leftChild;
-    delete rightChild;
-}
-
-
-template<typename KeyType, typename ValueType>
-AVLTree<KeyType, ValueType>::Node::Node(KeyType key, ValueType const &value, Node *parent) {
-    height = 1;
-    this->parent = parent;
-    this->leftChild = nullptr;
-    this->rightChild = nullptr;
-    this->key = key;
-    this->value = value;
-}
-
-template<typename KeyType, typename ValueType>
-int AVLTree<KeyType, ValueType>::Node::getBalance() const {
-    return nodeHeight(leftChild) - nodeHeight(rightChild);
-}
-
-template<typename KeyType, typename ValueType>
-std::string AVLTree<KeyType, ValueType>::Node::toString() const {
-    return this->toString(std::string());
-}
-
-template<typename KeyType, typename ValueType>
-std::string AVLTree<KeyType, ValueType>::Node::toString(std::string const &separator) const {
-    std::ostringstream stringStream;
-    stringStream << "[" << key << "," << separator << value << "]";
-    return stringStream.str();
-}
-
-template<typename KeyType, typename ValueType>
-int AVLTree<KeyType, ValueType>::Node::nodeHeight(Node const *node) {
-    if (node == nullptr) {
-        return 0;
-    }
-
-    return node->height;
 }
