@@ -154,7 +154,7 @@ private:
      * @param subRoot root node of the scanned subtree
      * @return pointer to value associated with key or nullptr if not found
      */
-    ValueType *findInSubtree(KeyType const &key, AVLNode<KeyType, ValueType> const *subRoot) const;
+    static ValueType *findInSubtree(KeyType const &key, AVLNode<KeyType, ValueType> const *subRoot);
 
 
     /**
@@ -175,8 +175,8 @@ private:
      * @param prefix prefix inserted before node (Left/Right)
      */
     template<typename StreamType>
-    void
-    printSubtree(StreamType &stream, AVLNode<KeyType, ValueType> const *subRoot, int indent, std::string prefix) const;
+    static void
+    printSubtree(StreamType &stream, AVLNode<KeyType, ValueType> const *subRoot, int indent, std::string const &prefix);
 
     /**
      * Return string representation of the subtree in pre-order traversal
@@ -184,7 +184,7 @@ private:
      * @param subRoot root node of the subtree
      * @return string representation in pre-order traversal
      */
-    std::string toStringSubtree(AVLNode<KeyType, ValueType> const *subRoot) const;
+    static std::string toStringSubtree(AVLNode<KeyType, ValueType> const *subRoot);
 
     /**
      * Get number of elements stored in a subtree
@@ -447,7 +447,7 @@ void AVLTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &va
 
 template<typename KeyType, typename ValueType>
 ValueType *
-AVLTree<KeyType, ValueType>::findInSubtree(KeyType const &key, AVLNode<KeyType, ValueType> const *subRoot) const {
+AVLTree<KeyType, ValueType>::findInSubtree(KeyType const &key, AVLNode<KeyType, ValueType> const *subRoot) {
     if (subRoot == nullptr) {
         return nullptr;
     }
@@ -469,7 +469,7 @@ ValueType *AVLTree<KeyType, ValueType>::find(const KeyType &key) const {
 }
 
 template<typename KeyType, typename ValueType>
-std::string AVLTree<KeyType, ValueType>::toStringSubtree(AVLNode<KeyType, ValueType> const *subRoot) const {
+std::string AVLTree<KeyType, ValueType>::toStringSubtree(AVLNode<KeyType, ValueType> const *subRoot) {
     if (subRoot == nullptr) {
         return "";
     }
@@ -492,7 +492,7 @@ template<typename KeyType, typename ValueType>
 template<typename StreamType>
 void
 AVLTree<KeyType, ValueType>::printSubtree(StreamType &stream, AVLNode<KeyType, ValueType> const *subRoot, int indent,
-                                          std::string prefix) const {
+                                          std::string const &prefix) {
     if (subRoot == nullptr) {
         return;
     }
