@@ -37,7 +37,6 @@ private:
         Node *rightChild;
         Node *parent;
 
-        Node();
 
         /**
          * Destroy node and its children recursively
@@ -472,11 +471,6 @@ std::ostream &operator<<(std::ostream &stream, AVLTree<KeyType, ValueType> const
     return stream;
 }
 
-
-template<typename KeyType, typename ValueType>
-AVLTree<KeyType, ValueType>::Node::Node() {
-    height = 0;
-}
 
 template<typename KeyType, typename ValueType>
 AVLTree<KeyType, ValueType>::Node::~Node() {
