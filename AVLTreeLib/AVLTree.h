@@ -19,7 +19,7 @@ class AVLNode {
 public:
     KeyType key;
     ValueType value;
-    int height{};
+    int height;
     AVLNode *leftChild;
     AVLNode *rightChild;
     AVLNode *parent;
