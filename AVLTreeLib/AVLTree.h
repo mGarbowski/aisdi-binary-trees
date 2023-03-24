@@ -174,6 +174,14 @@ private:
     std::string toStringSubtree(AVLNode<KeyType, ValueType> *subRoot) const;
 
     /**
+     * Get number of elements stored in a subtree
+     *
+     * @param subRoot root node of the subtree
+     * @return number of nodes in the subtree
+     */
+    size_t sizeSubtree(AVLNode<KeyType, ValueType> const *subRoot) const;
+
+    /**
      * Get string made of given number of spaces
      * utility for displaying trees
      *
@@ -357,17 +365,20 @@ AVLTree<KeyType, ValueType>::AVLTree() {
     root = nullptr;
 }
 
+template<typename KeyType, typename ValueType>
+size_t AVLTree<KeyType, ValueType>::sizeSubtree(const AVLNode<KeyType, ValueType> *subRoot) const {
+    if (subRoot == nullptr) {
+        return 0;
+    }
+
+    auto left = sizeSubtree(subRoot->leftChild);
+    auto right = sizeSubtree(subRoot->rightChild);
+    return left + 1 + right;
+}
 
 template<typename KeyType, typename ValueType>
 size_t AVLTree<KeyType, ValueType>::size() const {
-//    if (root == nullptr) {
-//        return 0;
-//    }
-//
-//    auto left = this->leftSubtree().size();
-//    auto right = this->rightSubtree().size();
-//    return left + 1 + right;
-    return 0;
+    return sizeSubtree(root);
 }
 
 template<typename KeyType, typename ValueType>
