@@ -118,8 +118,7 @@ namespace AVLTreeUnitTest {
 
     TEST(AVLTree, ConstructEmpty) {
         AVLTree<int, int> tree;
-        std::string expected = "";
-        ASSERT_EQ(expected, tree.toString());
+        ASSERT_EQ("", tree.toString());
     }
 
     TEST(AVLTree, insertToEmpty) {
@@ -422,8 +421,7 @@ namespace AVLTreeUnitTest {
         std::ostringstream stream;
         tree.print(stream);
         auto s = stream.str();
-        std::string s1 = "";
-        ASSERT_EQ(s1, s);
+        ASSERT_EQ("", s);
     }
 
     TEST(AVLTree, print1) {
@@ -463,5 +461,30 @@ namespace AVLTreeUnitTest {
         auto s = stream.str();
         std::string s1 = "[4, 4]\n    L: [2, 2]\n        L: [1, 1]\n        R: [3, 3]\n    R: [6, 6]\n        L: [5, 5]\n        R: [7, 7]\n";
         ASSERT_EQ(s1, s);
+    }
+
+    TEST(AVLTree, sizeEmpty) {
+        AVLTree<int, int> tree;
+        ASSERT_EQ(0, tree.size());
+    }
+
+    TEST(AVLTree, sizeOne) {
+        AVLTree<int, int> tree;
+        tree.insert(4, 4);
+        ASSERT_EQ(1, tree.size());
+    }
+
+    TEST(AVLTree, sizeMany) {
+        AVLTree<int, int> tree;
+
+        tree.insert(4, 4);
+        tree.insert(2, 2);
+        tree.insert(1, 1);
+        tree.insert(3, 3);
+        tree.insert(6, 6);
+        tree.insert(5, 5);
+        tree.insert(7, 7);
+
+        ASSERT_EQ(7, tree.size());
     }
 }
