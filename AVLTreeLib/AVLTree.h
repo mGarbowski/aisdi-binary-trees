@@ -76,6 +76,11 @@ private:
         std::string toString(std::string const &separator) const;
 
         /**
+         * Recalculate node's height recursively
+         */
+        void updateHeight();
+
+        /**
          * Utility for accessing node's height, null safe
          *
          * @param node root node of a tree
@@ -232,6 +237,14 @@ public:
 };
 
 template<typename KeyType, typename ValueType>
+void AVLTree<KeyType, ValueType>::Node::updateHeight() {
+    this->height = 1 + std::max(
+            Node::nodeHeight(this->leftChild),
+            Node::nodeHeight(this->rightChild)
+    );
+}
+
+template<typename KeyType, typename ValueType>
 AVLTree<KeyType, ValueType>::Node::Node(KeyType key, ValueType const &value, Node *parent) {
     height = 1;
     this->parent = parent;
@@ -309,7 +322,8 @@ typename AVLTree<KeyType, ValueType>::Node *AVLTree<KeyType, ValueType>::rotateL
         }
     }
 
-    rotationRoot->height -= 2;
+    rotationRoot->updateHeight();
+    pivot->updateHeight();
     return pivot;
 }
 
@@ -336,7 +350,8 @@ typename AVLTree<KeyType, ValueType>::Node *AVLTree<KeyType, ValueType>::rotateR
         }
     }
 
-    rotationRoot->height -= 2;
+    rotationRoot->updateHeight();
+    pivot->updateHeight();
     return pivot;
 }
 
