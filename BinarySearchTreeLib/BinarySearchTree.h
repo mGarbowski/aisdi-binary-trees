@@ -37,6 +37,7 @@ public:
     size_t height;
 };
 
+
 template<typename KeyType, typename ValueType>
 BSTNode<KeyType, ValueType>::BSTNode()
 {
@@ -119,9 +120,58 @@ public:
 
     std::string toString() const;
 
+    void removeRoot();
+
     template<typename StreamType>
     void print(StreamType &stream) const;
 };
+
+template<typename KeyType, typename ValueType>
+void BinarySearchTree<KeyType, ValueType>::removeRoot()
+{
+    if (root->numOfChildren() == 0)
+    {
+        delete root;
+        root = nullptr;
+    } else if (root->numOfChildren() == 1)
+    {
+        if (root->rightChild != nullptr)
+            root = root->rightChild;
+        else
+            root = root->leftChild;
+    } else
+    {
+        auto newRoot = root->biggestNodeToTheLeft();
+
+        if (newRoot->leftChild != nullptr)
+        {
+            newRoot->leftChild->parent = newRoot->parent;
+            newRoot->parent->rightChild = newRoot->leftChild;
+        }
+
+        auto parentOfnewRoot = newRoot->parent;
+
+        // delete the parent-child relationship
+        if (parentOfnewRoot->rightChild == newRoot)
+            parentOfnewRoot->rightChild = nullptr;
+        else
+            parentOfnewRoot->leftChild = nullptr;
+
+        // move the children of the node to the new node
+        newRoot->rightChild = root->rightChild;
+        newRoot->leftChild = root->leftChild;
+
+        // make the new node the parent of the current node's children
+        root->rightChild->parent = newRoot;
+        root->leftChild->parent = newRoot;
+
+        // finally, set the children of the current root as none to avoid deleting them and delete the current root
+        root->rightChild = nullptr;
+        root->leftChild = nullptr;
+        delete root;
+    }
+
+}
 
 //template<typename KeyType, typename ValueType>
 //template<typename StreamType>
@@ -139,62 +189,84 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
         return;
 
 
-    auto parentOfRemovedNode = nodeToRemove->parent;
-    if (nodeToRemove->numOfChildren() == 0)
+    if (nodeToRemove->parent != nullptr) // the node to be removed is not root
     {
-        if (parentOfRemovedNode->rightChild == nodeToRemove)
-            parentOfRemovedNode->rightChild = nullptr;
-        else
-            parentOfRemovedNode->leftChild = nullptr;
+        auto parentOfRemovedNode = nodeToRemove->parent;
 
-        delete nodeToRemove;
-    } else if (nodeToRemove->numOfChildren() == 1)
-    {
-        if (parentOfRemovedNode->rightChild == nodeToRemove)
+
+        if (nodeToRemove->numOfChildren() == 0)
         {
-            if (nodeToRemove->rightChild != nullptr)
-            {
-                auto nonNullChild = nodeToRemove->rightChild;
-                nodeToRemove->rightChild = nullptr;
-                nonNullChild->parent = parentOfRemovedNode;
-                parentOfRemovedNode->rightChild = nonNullChild;
-            } else
-            {
-                auto nonNullChild = nodeToRemove->leftChild;
-                nodeToRemove->leftChild = nullptr;
-                nonNullChild->parent = parentOfRemovedNode;
-                parentOfRemovedNode->rightChild = nonNullChild;
-            }
-        }
-    } else
-    {
-        auto substitutionNode = root->biggestNodeToTheLeft();
-        substitutionNode->parent = parentOfRemovedNode;
+            if (parentOfRemovedNode->rightChild == nodeToRemove)
+                parentOfRemovedNode->rightChild = nullptr;
+            else
+                parentOfRemovedNode->leftChild = nullptr;
 
-        if (parentOfRemovedNode->rightChild == nodeToRemove)
-        {
-            parentOfRemovedNode->rightChild = substitutionNode;
-
-            auto rightChildPtr = new BSTNode<KeyType, ValueType>;
-            *rightChildPtr = *(nodeToRemove->rightChild);
-
-            substitutionNode->rightChild = rightChildPtr;
-            nodeToRemove->rightChild = nullptr;
-            nodeToRemove->leftChild = nullptr;
             delete nodeToRemove;
+        } else if (nodeToRemove->numOfChildren() == 1)
+        {
+            // case - the node to be removed is its parent's right child
+            if (parentOfRemovedNode->rightChild == nodeToRemove)
+            {
+                // subcase - the non-null child (the successor of the removed node) is on the right
+                if (nodeToRemove->rightChild != nullptr)
+                {
+                    auto nonNullChild = nodeToRemove->rightChild;
+                    nodeToRemove->rightChild = nullptr;
+                    nonNullChild->parent = parentOfRemovedNode;
+                    parentOfRemovedNode->rightChild = nonNullChild;
+                } else // subcase - the successor is on the left
+                {
+                    auto nonNullChild = nodeToRemove->leftChild;
+                    nodeToRemove->leftChild = nullptr;
+                    nonNullChild->parent = parentOfRemovedNode;
+                    parentOfRemovedNode->rightChild = nonNullChild;
+                }
+            }
+            else
+            // case - the node to be removed is the left child of its parent
+            {
+                if (nodeToRemove->rightChild != nullptr)
+                // successor on the right
+                {
+                    auto nonNullChild = nodeToRemove->rightChild;
+                    nodeToRemove->rightChild = nullptr;
+                    nonNullChild->parent = parentOfRemovedNode;
+                    parentOfRemovedNode->leftChild = nonNullChild;
+                } else // succesor on the left
+                {
+                    auto nonNullChild = nodeToRemove->leftChild;
+                    nodeToRemove->leftChild = nullptr;
+                    nonNullChild->parent = parentOfRemovedNode;
+                    parentOfRemovedNode->leftChild = nonNullChild;
+                }
+            }
         } else
         {
-            parentOfRemovedNode->leftChild = substitutionNode;
+            auto substitutionNode = nodeToRemove->biggestNodeToTheLeft();
 
-            auto leftChildPtr = new BSTNode<KeyType, ValueType>;
-            *leftChildPtr = *(nodeToRemove->rightChild);
+            if (substitutionNode->leftChild != nullptr)
+            {
+                // case where the biggest node in the left subtree has smaller children
+                substitutionNode->leftChild->parent = substitutionNode->parent;
+                substitutionNode->parent->rightChild = substitutionNode->leftChild;
+            }
 
-            substitutionNode->leftChild = leftChildPtr;
-            nodeToRemove->rightChild = nullptr;
-            nodeToRemove->leftChild = nullptr;
-            delete nodeToRemove;
+            substitutionNode->parent = parentOfRemovedNode;
+
+            if (parentOfRemovedNode->rightChild == nodeToRemove)
+                parentOfRemovedNode->rightChild = substitutionNode;
+            else
+                parentOfRemovedNode->leftChild = substitutionNode;
+
+
+                substitutionNode->rightChild = nodeToRemove->rightChild;
+                substitutionNode->leftChild = nodeToRemove->leftChild;
+                nodeToRemove->rightChild = nullptr;
+                nodeToRemove->leftChild = nullptr;
+                delete nodeToRemove;
         }
-    }
+    } else
+        removeRoot();
 }
 
 template<typename KeyType, typename ValueType>
