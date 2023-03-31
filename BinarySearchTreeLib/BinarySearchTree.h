@@ -21,7 +21,7 @@ public:
 
     BSTNode();
 
-    std::string toString() const;
+    std::string toString(std::string separator = "") const;
 
     int numOfChildren() const;
 
@@ -73,10 +73,10 @@ int BSTNode<KeyType, ValueType>::numOfChildren() const
 }
 
 template<typename KeyType, typename ValueType>
-std::string BSTNode<KeyType, ValueType>::toString() const
+std::string BSTNode<KeyType, ValueType>::toString(std::string separator) const
 {
     std::stringstream ss;
-    ss << "[" << key << "," << value << "]";
+    ss << "[" << key << "," << separator << value << "]";
     return ss.str();
 }
 
@@ -104,6 +104,8 @@ public:
 
     size_t size(BSTNode<KeyType, ValueType> *subRoot) const;
 
+    static const auto PRINT_NEST_INDENT = 4;
+
     void insertIntoSubtree(KeyType const &key, ValueType const &value, BSTNode<KeyType, ValueType> *subRoot);
 
     void insert(KeyType const &key, ValueType const &value);
@@ -123,8 +125,43 @@ public:
     void removeRoot();
 
     template<typename StreamType>
-    void print(StreamType &stream) const;
+    void
+    printSubtree(StreamType &stream, BSTNode<KeyType, ValueType> *subRoot, int indent, std::string const &prefix);
+
+    std::string indentWhitespace(int width);
+
+    template<typename StreamType>
+    void print(StreamType &stream);
 };
+
+template<typename KeyType, typename ValueType>
+template<typename StreamType>
+void BinarySearchTree<KeyType, ValueType>::print(StreamType &stream)
+{
+    printSubtree(stream, root, 0, "");
+}
+
+template<typename KeyType, typename ValueType>
+std::string BinarySearchTree<KeyType, ValueType>::indentWhitespace(int width)
+{
+    return std::string(width, ' ');
+}
+
+template<typename KeyType, typename ValueType>
+template<typename StreamType>
+void BinarySearchTree<KeyType, ValueType>::printSubtree(StreamType &stream, BSTNode<KeyType, ValueType> *subRoot,
+                                                        const int indent, const std::string &prefix)
+{
+    if (subRoot == nullptr)
+        return;
+
+    stream << indentWhitespace(indent) << prefix << subRoot->toString(" ") << '\n';
+
+    if (subRoot->leftChild != nullptr)
+        printSubtree(stream, subRoot->leftChild, indent + PRINT_NEST_INDENT, "L: ");
+    if (subRoot->rightChild != nullptr)
+        printSubtree(stream, subRoot->rightChild, indent + PRINT_NEST_INDENT, "R: ");
+}
 
 template<typename KeyType, typename ValueType>
 void BinarySearchTree<KeyType, ValueType>::removeRoot()
@@ -173,13 +210,6 @@ void BinarySearchTree<KeyType, ValueType>::removeRoot()
 
 }
 
-//template<typename KeyType, typename ValueType>
-//template<typename StreamType>
-//void BinarySearchTree<KeyType, ValueType>::print(StreamType &stream) const
-//{
-//
-//}
-
 template<typename KeyType, typename ValueType>
 void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
 {
@@ -189,7 +219,7 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
         return;
 
 
-    if (nodeToRemove->parent != nullptr) // the node to be removed is not root
+    if (nodeToRemove->parent != nullptr) // the node to be removed is not the root
     {
         auto parentOfRemovedNode = nodeToRemove->parent;
 
@@ -219,14 +249,13 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
                     auto nonNullChild = nodeToRemove->leftChild;
                     nodeToRemove->leftChild = nullptr;
                     nonNullChild->parent = parentOfRemovedNode;
-                    parentOfRemovedNode->rightChild = nonNullChild;
+                    parentOfRemovedNode->leftChild = nonNullChild;
                 }
-            }
-            else
-            // case - the node to be removed is the left child of its parent
+            } else
+                // case - the node to be removed is the left child of its parent
             {
                 if (nodeToRemove->rightChild != nullptr)
-                // successor on the right
+                    // successor on the right
                 {
                     auto nonNullChild = nodeToRemove->rightChild;
                     nodeToRemove->rightChild = nullptr;
@@ -258,12 +287,11 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
             else
                 parentOfRemovedNode->leftChild = substitutionNode;
 
-
-                substitutionNode->rightChild = nodeToRemove->rightChild;
-                substitutionNode->leftChild = nodeToRemove->leftChild;
-                nodeToRemove->rightChild = nullptr;
-                nodeToRemove->leftChild = nullptr;
-                delete nodeToRemove;
+            substitutionNode->rightChild = nodeToRemove->rightChild;
+            substitutionNode->leftChild = nodeToRemove->leftChild;
+            nodeToRemove->rightChild = nullptr;
+            nodeToRemove->leftChild = nullptr;
+            delete nodeToRemove;
         }
     } else
         removeRoot();
