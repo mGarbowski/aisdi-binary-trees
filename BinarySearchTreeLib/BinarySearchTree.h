@@ -33,8 +33,6 @@ public:
 
     BSTNode<KeyType, ValueType> *traverseRight();
 
-
-    size_t height;
 };
 
 
@@ -88,7 +86,6 @@ BSTNode<KeyType, ValueType>::BSTNode(KeyType key, ValueType value, BSTNode *pare
     this->parent = parent;
     leftChild = nullptr;
     rightChild = nullptr;
-    height = 1;
 }
 
 
