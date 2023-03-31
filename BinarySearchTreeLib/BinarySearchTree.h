@@ -26,8 +26,8 @@ public:
      * Used in the remove function to substitute the node if it has two children.
      * Returns the node with the largest key value from its left subtree.
      */
-    BSTNode<KeyType, ValueType> biggestNodeToTheLeft();
-    BSTNode<KeyType, ValueType> traverseRight();
+    BSTNode<KeyType, ValueType>* biggestNodeToTheLeft();
+    BSTNode<KeyType, ValueType>* traverseRight();
 
 
     size_t height;
@@ -42,15 +42,15 @@ BSTNode<KeyType, ValueType>::BSTNode()
 }
 
 template<typename KeyType, typename ValueType>
-BSTNode<KeyType, ValueType> BSTNode<KeyType, ValueType>::traverseRight()
+BSTNode<KeyType, ValueType>* BSTNode<KeyType, ValueType>::traverseRight()
 {
     if (rightChild == nullptr)
-        return *this;
-    return traverseRight(rightChild);
+        return this;
+    return rightChild->traverseRight();
 }
 
 template<typename KeyType, typename ValueType>
-BSTNode<KeyType, ValueType> BSTNode<KeyType, ValueType>::biggestNodeToTheLeft()
+BSTNode<KeyType, ValueType>* BSTNode<KeyType, ValueType>::biggestNodeToTheLeft()
 {
     return leftChild->traverseRight();
 }
@@ -78,9 +78,9 @@ std::string BSTNode<KeyType, ValueType>::toString() const
 template<typename KeyType, typename ValueType>
 BSTNode<KeyType, ValueType>::BSTNode(KeyType key, ValueType value, BSTNode *parent)
 {
-    key = key;
-    value = value;
-    parent = parent;
+    this->key = key;
+    this->value = value;
+    this->parent = parent;
     leftChild = nullptr;
     rightChild = nullptr;
     height = 1;
@@ -91,6 +91,8 @@ template<typename KeyType, typename ValueType>
 class BinarySearchTree
 {
 public:
+
+    explicit BinarySearchTree(BSTNode<KeyType, ValueType> *root = nullptr) : root(root) {};
 
     BSTNode<KeyType, ValueType> *root;
 
@@ -119,7 +121,7 @@ public:
 template<typename KeyType, typename ValueType>
 void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
 {
- BSTNode<KeyType, ValueType> *nodeToRemove = findNode(key, *root);
+ auto nodeToRemove = findNode(key, root);
 
     if (nodeToRemove == nullptr)
         throw std::invalid_argument("The key to be removed is not a part of the tree!");
@@ -141,24 +143,24 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
         {
             if (nodeToRemove->rightChild != nullptr)
             {
-                auto nonNullChild = *(nodeToRemove->rightChild);
+                auto nonNullChild = nodeToRemove->rightChild;
                 nodeToRemove->rightChild = nullptr;
-                nonNullChild.parent = parentOfRemovedNode;
-                parentOfRemovedNode->rightChild = *nonNullChild;
+                nonNullChild->parent = parentOfRemovedNode;
+                parentOfRemovedNode->rightChild = nonNullChild;
             }
             else
             {
-                auto nonNullChild = *(nodeToRemove->leftChild);
+                auto nonNullChild = nodeToRemove->leftChild;
                 nodeToRemove->leftChild = nullptr;
-                nonNullChild.parent = parentOfRemovedNode;
-                parentOfRemovedNode->rightChild = *nonNullChild;
+                nonNullChild->parent = parentOfRemovedNode;
+                parentOfRemovedNode->rightChild = nonNullChild;
             }
         }
     }
     else
     {
         auto substitutionNode = root->biggestNodeToTheLeft();
-        substitutionNode.parent = parentOfRemovedNode;
+        substitutionNode->parent = parentOfRemovedNode;
 
         if (parentOfRemovedNode->rightChild == nodeToRemove)
         {
@@ -167,7 +169,7 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
             auto rightChildPtr = new BSTNode<KeyType, ValueType>;
             *rightChildPtr = *(nodeToRemove->rightChild);
 
-            substitutionNode.rightChild = rightChildPtr;
+            substitutionNode->rightChild = rightChildPtr;
             nodeToRemove->rightChild = nullptr;
             nodeToRemove->leftChild = nullptr;
             delete nodeToRemove;
@@ -179,7 +181,7 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
             auto leftChildPtr = new BSTNode<KeyType, ValueType>;
             *leftChildPtr = *(nodeToRemove->rightChild);
 
-            substitutionNode.leftChild = leftChildPtr;
+            substitutionNode->leftChild = leftChildPtr;
             nodeToRemove->rightChild = nullptr;
             nodeToRemove->leftChild = nullptr;
             delete nodeToRemove;
@@ -194,15 +196,15 @@ BinarySearchTree<KeyType, ValueType>::findNode(const KeyType &key, BSTNode<KeyTy
     if (subRoot == nullptr || subRoot->key == key)
         return subRoot;
     else if (subRoot->key < key)
-        return findNode(key, *(subRoot->rightChild));
-    return findNode(key, *(subRoot->leftChild));
+        return findNode(key, subRoot->rightChild);
+    return findNode(key, subRoot->leftChild);
 }
 
 
 template<typename KeyType, typename ValueType>
 ValueType *BinarySearchTree<KeyType, ValueType>::find(const KeyType &key)
 {
-    return findInSubtree(key, *root);
+    return findInSubtree(key, root);
 }
 
 template<typename KeyType, typename ValueType>
@@ -232,7 +234,7 @@ ValueType *BinarySearchTree<KeyType, ValueType>::findInSubtree(const KeyType &ke
     if (subRoot == nullptr)
         return nullptr;
 
-    else if (subRoot->key = key)
+    else if (subRoot->key == key)
     {
         auto valPtr = new ValueType;
         *valPtr = subRoot->value;
@@ -271,10 +273,20 @@ void BinarySearchTree<KeyType, ValueType>::insert(const KeyType &key, const Valu
         root = new BSTNode<KeyType, ValueType>(key, value);
 
     else if (root->key < key)
-        insertIntoSubtree(key, value, root->rightChild);
-
+    {
+        if (root->rightChild == nullptr)
+            root->rightChild = new BSTNode<KeyType, ValueType>(key, value);
+        else
+            insertIntoSubtree(key, value, root->rightChild);
+    }
     else
-        insertIntoSubtree(key, value, root->leftChild);
+    {
+        if (root->leftChild == nullptr)
+            root->leftChild = new BSTNode<KeyType, ValueType>(key, value);
+        else
+            insertIntoSubtree(key, value, root->leftChild);
+
+    }
 }
 
 template<typename KeyType, typename ValueType>
