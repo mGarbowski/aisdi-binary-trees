@@ -425,10 +425,7 @@ void AVLTree<KeyType, ValueType>::insertIntoSubtree(KeyType const &key, ValueTyp
     }
 
 
-    subRoot->height = 1 + std::max(
-            Node::nodeHeight(subRoot->leftChild),
-            Node::nodeHeight(subRoot->rightChild)
-    );
+    subRoot->updateHeight();
     rebalance(key, subRoot);
 }
 
