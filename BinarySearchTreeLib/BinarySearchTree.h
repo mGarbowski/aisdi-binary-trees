@@ -60,7 +60,7 @@ private:
 
 public:
 
-    explicit BinarySearchTree(BinarySearchTree<KeyType, ValueType>::Node *root = nullptr) : root(root) {};
+    explicit BinarySearchTree();
 
 
     size_t size(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const;
@@ -76,6 +76,11 @@ public:
     template<typename StreamType>
     void print(StreamType &stream);
 };
+
+template<typename KeyType, typename ValueType>
+BinarySearchTree<KeyType, ValueType>::BinarySearchTree() {
+    root = nullptr;
+}
 
 
 template<typename KeyType, typename ValueType>
