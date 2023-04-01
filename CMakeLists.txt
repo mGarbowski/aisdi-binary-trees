@@ -19,7 +19,6 @@ set(AVL_LIBRARY_SOURCES
 
 set(BST_LIBRARY_SOURCES
         BinarySearchTreeLib/BinarySearchTree.h
-        BinarySearchTreeLib/BinarySearchTreeLib.cpp
         benchmark/benchmark.h)
 
 set(UNIT_TEST_SOURCES
