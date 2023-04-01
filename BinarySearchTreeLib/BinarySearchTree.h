@@ -31,7 +31,7 @@ private:
          * Used in the remove function to substitute the node if it has two children.
          * Returns the node with the largest key value from its left subtree.
          */
-        Node *biggestNodeToTheLeft();
+        Node *biggestNodeToTheLeft() const;
 
         Node *traverseRight();
 
@@ -39,25 +39,25 @@ private:
 
     BinarySearchTree<KeyType, ValueType>::Node *root;
 
-    void insertIntoSubtree(KeyType const &key, ValueType const &value,
-                           BinarySearchTree<KeyType, ValueType>::Node *subRoot);
-
-    BinarySearchTree<KeyType, ValueType>::Node *findNode(KeyType const &key,
-                                                         BinarySearchTree<KeyType, ValueType>::Node *subRoot);
-
-    ValueType *findInSubtree(KeyType const &key, BinarySearchTree<KeyType, ValueType>::Node *subRoot);
-
-    std::string subTreeToString(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const;
-
     void removeRoot();
 
-    std::string indentWhitespace(int width);
+    static const auto PRINT_NEST_INDENT = 4;
+
+    static BinarySearchTree<KeyType, ValueType>::Node *findNode(KeyType const &key,
+                                                                BinarySearchTree<KeyType, ValueType>::Node *subRoot);
+
+    static void insertIntoSubtree(KeyType const &key, ValueType const &value,
+                                  BinarySearchTree<KeyType, ValueType>::Node *subRoot);
+
+    static std::string subTreeToString(BinarySearchTree<KeyType, ValueType>::Node *subRoot);
+
+    static ValueType *findInSubtree(KeyType const &key, BinarySearchTree<KeyType, ValueType>::Node *subRoot);
 
     template<typename StreamType>
-    void printSubtree(StreamType &stream, BinarySearchTree<KeyType, ValueType>::Node *subRoot, int indent,
-                      std::string const &prefix);
+    static void printSubtree(StreamType &stream, BinarySearchTree<KeyType, ValueType>::Node *subRoot, int indent,
+                             std::string const &prefix);
 
-    static const auto PRINT_NEST_INDENT = 4;
+    static std::string indentWhitespace(int width);
 
 public:
 
@@ -105,7 +105,7 @@ typename BinarySearchTree<KeyType, ValueType>::Node *BinarySearchTree<KeyType, V
 
 template<typename KeyType, typename ValueType>
 typename BinarySearchTree<KeyType, ValueType>::Node *
-BinarySearchTree<KeyType, ValueType>::Node::biggestNodeToTheLeft() {
+BinarySearchTree<KeyType, ValueType>::Node::biggestNodeToTheLeft() const {
     return leftChild->traverseRight();
 }
 
@@ -305,7 +305,7 @@ ValueType *BinarySearchTree<KeyType, ValueType>::find(const KeyType &key) {
 
 template<typename KeyType, typename ValueType>
 std::string
-BinarySearchTree<KeyType, ValueType>::subTreeToString(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const {
+BinarySearchTree<KeyType, ValueType>::subTreeToString(BinarySearchTree<KeyType, ValueType>::Node *subRoot)  {
     if (subRoot == nullptr)
         return "";
 
