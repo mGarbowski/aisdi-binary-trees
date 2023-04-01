@@ -18,9 +18,11 @@ private:
         ValueType value;
         KeyType key;
 
+        Node();
+
         Node(KeyType key, ValueType value, Node *parent = nullptr);
 
-        Node();
+        ~Node();
 
         std::string toString(std::string separator = "") const;
 
@@ -60,8 +62,9 @@ private:
 
 public:
 
-    explicit BinarySearchTree();
+    BinarySearchTree();
 
+    ~BinarySearchTree();
 
     size_t size(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const;
 
@@ -76,6 +79,17 @@ public:
     template<typename StreamType>
     void print(StreamType &stream);
 };
+
+template<typename KeyType, typename ValueType>
+BinarySearchTree<KeyType, ValueType>::~BinarySearchTree() {
+    delete root;
+}
+
+template<typename KeyType, typename ValueType>
+BinarySearchTree<KeyType, ValueType>::Node::~Node() {
+    delete leftChild;
+    delete rightChild;
+}
 
 template<typename KeyType, typename ValueType>
 BinarySearchTree<KeyType, ValueType>::BinarySearchTree() {
