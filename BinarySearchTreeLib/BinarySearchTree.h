@@ -132,8 +132,8 @@ BinarySearchTree<KeyType, ValueType>::Node::Node(KeyType key, ValueType value, N
     this->key = key;
     this->value = value;
     this->parent = parent;
-    leftChild = nullptr;
-    rightChild = nullptr;
+    this->leftChild = nullptr;
+    this->rightChild = nullptr;
 }
 
 
@@ -214,76 +214,75 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key) {
         return;
 
 
-    if (nodeToRemove->parent != nullptr) // the node to be removed is not the root
-    {
-        auto parentOfRemovedNode = nodeToRemove->parent;
+    if (nodeToRemove->parent == nullptr) {
+        removeRoot();
+        return;
+    }
+
+    auto parentOfRemovedNode = nodeToRemove->parent;
 
 
-        if (nodeToRemove->numOfChildren() == 0) {
-            if (parentOfRemovedNode->rightChild == nodeToRemove)
-                parentOfRemovedNode->rightChild = nullptr;
-            else
-                parentOfRemovedNode->leftChild = nullptr;
+    if (nodeToRemove->numOfChildren() == 0) {
+        if (parentOfRemovedNode->rightChild == nodeToRemove)
+            parentOfRemovedNode->rightChild = nullptr;
+        else
+            parentOfRemovedNode->leftChild = nullptr;
 
-            delete nodeToRemove;
-        } else if (nodeToRemove->numOfChildren() == 1) {
-            // case - the node to be removed is its parent's right child
-            if (parentOfRemovedNode->rightChild == nodeToRemove) {
-                // subcase - the non-null child (the successor of the removed node) is on the right
-                if (nodeToRemove->rightChild != nullptr) {
-                    auto nonNullChild = nodeToRemove->rightChild;
-                    nodeToRemove->rightChild = nullptr;
-                    nonNullChild->parent = parentOfRemovedNode;
-                    parentOfRemovedNode->rightChild = nonNullChild;
-                } else // subcase - the successor is on the left
-                {
-                    auto nonNullChild = nodeToRemove->leftChild;
-                    nodeToRemove->leftChild = nullptr;
-                    nonNullChild->parent = parentOfRemovedNode;
-                    parentOfRemovedNode->leftChild = nonNullChild;
-                }
-            } else
-                // case - the node to be removed is the left child of its parent
-            {
-                if (nodeToRemove->rightChild != nullptr)
-                    // successor on the right
-                {
-                    auto nonNullChild = nodeToRemove->rightChild;
-                    nodeToRemove->rightChild = nullptr;
-                    nonNullChild->parent = parentOfRemovedNode;
-                    parentOfRemovedNode->leftChild = nonNullChild;
-                } else // succesor on the left
-                {
-                    auto nonNullChild = nodeToRemove->leftChild;
-                    nodeToRemove->leftChild = nullptr;
-                    nonNullChild->parent = parentOfRemovedNode;
-                    parentOfRemovedNode->leftChild = nonNullChild;
-                }
+        delete nodeToRemove;
+    } else if (nodeToRemove->numOfChildren() == 1) {
+        // case - the node to be removed is its parent's right child
+        if (parentOfRemovedNode->rightChild == nodeToRemove) {
+            // subcase - the non-null child (the successor of the removed node) is on the right
+            if (nodeToRemove->rightChild != nullptr) {
+                auto nonNullChild = nodeToRemove->rightChild;
+                nodeToRemove->rightChild = nullptr;
+                nonNullChild->parent = parentOfRemovedNode;
+                parentOfRemovedNode->rightChild = nonNullChild;
+            } else {
+                // subcase - the successor is on the left
+                auto nonNullChild = nodeToRemove->leftChild;
+                nodeToRemove->leftChild = nullptr;
+                nonNullChild->parent = parentOfRemovedNode;
+                parentOfRemovedNode->leftChild = nonNullChild;
             }
         } else {
-            auto substitutionNode = nodeToRemove->biggestNodeToTheLeft();
-
-            if (substitutionNode->leftChild != nullptr) {
-                // case where the biggest node in the left subtree has smaller children
-                substitutionNode->leftChild->parent = substitutionNode->parent;
-                substitutionNode->parent->rightChild = substitutionNode->leftChild;
+            // case - the node to be removed is the left child of its parent
+            if (nodeToRemove->rightChild != nullptr) {
+                // successor on the right
+                auto nonNullChild = nodeToRemove->rightChild;
+                nodeToRemove->rightChild = nullptr;
+                nonNullChild->parent = parentOfRemovedNode;
+                parentOfRemovedNode->leftChild = nonNullChild;
+            } else {
+                // succesor on the left
+                auto nonNullChild = nodeToRemove->leftChild;
+                nodeToRemove->leftChild = nullptr;
+                nonNullChild->parent = parentOfRemovedNode;
+                parentOfRemovedNode->leftChild = nonNullChild;
             }
-
-            substitutionNode->parent = parentOfRemovedNode;
-
-            if (parentOfRemovedNode->rightChild == nodeToRemove)
-                parentOfRemovedNode->rightChild = substitutionNode;
-            else
-                parentOfRemovedNode->leftChild = substitutionNode;
-
-            substitutionNode->rightChild = nodeToRemove->rightChild;
-            substitutionNode->leftChild = nodeToRemove->leftChild;
-            nodeToRemove->rightChild = nullptr;
-            nodeToRemove->leftChild = nullptr;
-            delete nodeToRemove;
         }
-    } else
-        removeRoot();
+    } else {
+        auto substitutionNode = nodeToRemove->biggestNodeToTheLeft();
+
+        if (substitutionNode->leftChild != nullptr) {
+            // case where the biggest node in the left subtree has smaller children
+            substitutionNode->leftChild->parent = substitutionNode->parent;
+            substitutionNode->parent->rightChild = substitutionNode->leftChild;
+        }
+
+        substitutionNode->parent = parentOfRemovedNode;
+
+        if (parentOfRemovedNode->rightChild == nodeToRemove)
+            parentOfRemovedNode->rightChild = substitutionNode;
+        else
+            parentOfRemovedNode->leftChild = substitutionNode;
+
+        substitutionNode->rightChild = nodeToRemove->rightChild;
+        substitutionNode->leftChild = nodeToRemove->leftChild;
+        nodeToRemove->rightChild = nullptr;
+        nodeToRemove->leftChild = nullptr;
+        delete nodeToRemove;
+    }
 }
 
 template<typename KeyType, typename ValueType>
@@ -294,7 +293,8 @@ BinarySearchTree<KeyType, ValueType>::findNode(const KeyType &key,
         return subRoot;
     else if (subRoot->key < key)
         return findNode(key, subRoot->rightChild);
-    return findNode(key, subRoot->leftChild);
+    else
+        return findNode(key, subRoot->leftChild);
 }
 
 
@@ -326,33 +326,38 @@ std::string BinarySearchTree<KeyType, ValueType>::toString() const {
 template<typename KeyType, typename ValueType>
 ValueType *BinarySearchTree<KeyType, ValueType>::findInSubtree(const KeyType &key,
                                                                BinarySearchTree<KeyType, ValueType>::Node *subRoot) {
-    if (subRoot == nullptr)
+    if (subRoot == nullptr) {
         return nullptr;
-
-    else if (subRoot->key == key) {
+    }
+    if (subRoot->key == key) {
         auto valPtr = new ValueType;
         *valPtr = subRoot->value;
         return valPtr;
-    } else if (subRoot->key > key)
-        return findInSubtree(key, subRoot->leftChild);
+    }
 
-    return findInSubtree(key, subRoot->rightChild);
+    if (subRoot->key > key) {
+        return findInSubtree(key, subRoot->leftChild);
+    } else {
+        return findInSubtree(key, subRoot->rightChild);
+    }
 }
 
 template<typename KeyType, typename ValueType>
 void BinarySearchTree<KeyType, ValueType>::insertIntoSubtree(const KeyType &key, const ValueType &value,
                                                              BinarySearchTree<KeyType, ValueType>::Node *subRoot) {
-    if (subRoot->key == key)
+    if (subRoot->key == key) {
         subRoot->value = value;
-    else if (subRoot->key < key) {
+    } else if (subRoot->key < key) {
         if (subRoot->rightChild == nullptr)
             subRoot->rightChild = new BinarySearchTree<KeyType, ValueType>::Node(key, value, subRoot);
         else
             insertIntoSubtree(key, value, subRoot->rightChild);
-    } else if (subRoot->leftChild == nullptr)
-        subRoot->leftChild = new BinarySearchTree<KeyType, ValueType>::Node(key, value, subRoot);
-    else
-        insertIntoSubtree(key, value, subRoot->leftChild);
+    } else {
+        if (subRoot->leftChild == nullptr)
+            subRoot->leftChild = new BinarySearchTree<KeyType, ValueType>::Node(key, value, subRoot);
+        else
+            insertIntoSubtree(key, value, subRoot->leftChild);
+    }
 }
 
 
