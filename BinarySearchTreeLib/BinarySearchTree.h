@@ -37,13 +37,12 @@ private:
     };
 
     BinarySearchTree<KeyType, ValueType>::Node *root;
-    static const auto PRINT_NEST_INDENT = 4;
 
-    void
-    insertIntoSubtree(KeyType const &key, ValueType const &value, BinarySearchTree<KeyType, ValueType>::Node *subRoot);
+    void insertIntoSubtree(KeyType const &key, ValueType const &value,
+                           BinarySearchTree<KeyType, ValueType>::Node *subRoot);
 
-    BinarySearchTree<KeyType, ValueType>::Node *
-    findNode(KeyType const &key, BinarySearchTree<KeyType, ValueType>::Node *subRoot);
+    BinarySearchTree<KeyType, ValueType>::Node *findNode(KeyType const &key,
+                                                         BinarySearchTree<KeyType, ValueType>::Node *subRoot);
 
     ValueType *findInSubtree(KeyType const &key, BinarySearchTree<KeyType, ValueType>::Node *subRoot);
 
@@ -56,6 +55,8 @@ private:
     template<typename StreamType>
     void printSubtree(StreamType &stream, BinarySearchTree<KeyType, ValueType>::Node *subRoot, int indent,
                       std::string const &prefix);
+
+    static const auto PRINT_NEST_INDENT = 4;
 
 public:
 
@@ -72,7 +73,8 @@ public:
 
     std::string toString() const;
 
-    template<typename StreamType> void print(StreamType &stream);
+    template<typename StreamType>
+    void print(StreamType &stream);
 };
 
 
