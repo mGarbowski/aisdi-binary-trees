@@ -305,7 +305,7 @@ ValueType *BinarySearchTree<KeyType, ValueType>::find(const KeyType &key) {
 
 template<typename KeyType, typename ValueType>
 std::string
-BinarySearchTree<KeyType, ValueType>::subTreeToString(BinarySearchTree<KeyType, ValueType>::Node *subRoot)  {
+BinarySearchTree<KeyType, ValueType>::subTreeToString(BinarySearchTree<KeyType, ValueType>::Node *subRoot) {
     if (subRoot == nullptr)
         return "";
 
