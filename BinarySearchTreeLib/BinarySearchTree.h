@@ -18,7 +18,6 @@ private:
         ValueType value;
         KeyType key;
 
-        Node();
 
         Node(KeyType key, ValueType value, Node *parent = nullptr);
 
@@ -96,13 +95,6 @@ BinarySearchTree<KeyType, ValueType>::BinarySearchTree() {
     root = nullptr;
 }
 
-
-template<typename KeyType, typename ValueType>
-BinarySearchTree<KeyType, ValueType>::Node::Node() {
-    leftChild = nullptr;
-    rightChild = nullptr;
-    parent = nullptr;
-}
 
 template<typename KeyType, typename ValueType>
 typename BinarySearchTree<KeyType, ValueType>::Node *BinarySearchTree<KeyType, ValueType>::Node::traverseRight() {
