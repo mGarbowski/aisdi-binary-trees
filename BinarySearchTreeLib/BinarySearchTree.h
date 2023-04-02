@@ -171,9 +171,22 @@ void BinarySearchTree<KeyType, ValueType>::removeRoot() {
         root = nullptr;
     } else if (root->numOfChildren() == 1) {
         if (root->rightChild != nullptr)
-            root = root->rightChild;
+        {
+            auto newRoot = root->rightChild;
+            root->rightChild = nullptr;
+            delete root;
+            newRoot->parent = nullptr;
+            root = newRoot;
+        }
         else
-            root = root->leftChild;
+        {
+            auto newRoot = root->leftChild;
+            root->leftChild = nullptr;
+            delete root;
+            newRoot->parent = nullptr;
+            root = newRoot;
+        }
+
     } else {
         auto newRoot = root->biggestNodeToTheLeft();
 
@@ -202,6 +215,8 @@ void BinarySearchTree<KeyType, ValueType>::removeRoot() {
         root->rightChild = nullptr;
         root->leftChild = nullptr;
         delete root;
+        newRoot->parent = nullptr;
+        root = newRoot;
     }
 
 }
@@ -229,6 +244,7 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key) {
             parentOfRemovedNode->leftChild = nullptr;
 
         delete nodeToRemove;
+
     } else if (nodeToRemove->numOfChildren() == 1) {
         // case - the node to be removed is its parent's right child
         if (parentOfRemovedNode->rightChild == nodeToRemove) {
@@ -243,7 +259,7 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key) {
                 auto nonNullChild = nodeToRemove->leftChild;
                 nodeToRemove->leftChild = nullptr;
                 nonNullChild->parent = parentOfRemovedNode;
-                parentOfRemovedNode->leftChild = nonNullChild;
+                parentOfRemovedNode->rightChild = nonNullChild;
             }
         } else {
             // case - the node to be removed is the left child of its parent
