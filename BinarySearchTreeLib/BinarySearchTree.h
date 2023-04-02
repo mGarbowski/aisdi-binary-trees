@@ -59,13 +59,15 @@ private:
 
     static std::string indentWhitespace(int width);
 
+    size_t sizeOfSubtree(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const;
+
 public:
 
     BinarySearchTree();
 
     ~BinarySearchTree();
 
-    size_t size(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const;
+    size_t size() const;
 
     void insert(KeyType const &key, ValueType const &value);
 
@@ -76,8 +78,18 @@ public:
     std::string toString() const;
 
     template<typename StreamType>
-    void print(StreamType &stream);
+    void print(StreamType &stream) const;
 };
+
+template<typename KeyType, typename ValueType>
+size_t BinarySearchTree<KeyType, ValueType>::sizeOfSubtree(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const {
+    if (subRoot == nullptr)
+        return 0;
+
+    auto left = sizeOfSubtree(subRoot->leftChild);
+    auto right = sizeOfSubtree(subRoot->rightChild);
+    return left + right + 1;
+}
 
 template<typename KeyType, typename ValueType>
 BinarySearchTree<KeyType, ValueType>::~BinarySearchTree() {
@@ -139,7 +151,7 @@ BinarySearchTree<KeyType, ValueType>::Node::Node(KeyType key, ValueType value, N
 
 template<typename KeyType, typename ValueType>
 template<typename StreamType>
-void BinarySearchTree<KeyType, ValueType>::print(StreamType &stream) {
+void BinarySearchTree<KeyType, ValueType>::print(StreamType &stream) const{
     printSubtree(stream, root, 0, "");
 }
 
@@ -387,13 +399,8 @@ void BinarySearchTree<KeyType, ValueType>::insert(const KeyType &key, const Valu
 }
 
 template<typename KeyType, typename ValueType>
-size_t BinarySearchTree<KeyType, ValueType>::size(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const {
-    if (subRoot == nullptr)
-        return 0;
-
-    auto left = size(subRoot->leftChild);
-    auto right = size(subRoot->rightChild);
-    return left + right + 1;
+size_t BinarySearchTree<KeyType, ValueType>::size() const {
+    return sizeOfSubtree(root);
 }
 
 template<typename KeyType, typename ValueType>
