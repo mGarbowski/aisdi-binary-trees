@@ -28,8 +28,7 @@ private:
      * @tparam KeyType type of keys used for comparison
      * @tparam ValueType type of values
      */
-    class Node {
-    public:
+    struct Node {
         KeyType key;
         ValueType value;
         int height;
