@@ -134,6 +134,13 @@ private:
     static Node *rotateRight(Node *rotationRoot);
 
     /**
+     * Common step of left and right rotation
+     *
+     * @return new root node of the subtree after rotation
+     */
+    static Node *finishRotation(Node *rotationRoot, Node *rootParent, Node *pivot, Node *shiftedSubtree);
+
+    /**
      * Find value associated with key in subtree with subRoot as its root node
      * @param key searched key
      * @param subRoot root node of the scanned subtree
@@ -233,6 +240,8 @@ public:
      */
     template<typename StreamType>
     void print(StreamType &stream) const;
+
+
 };
 
 template<typename KeyType, typename ValueType>
@@ -309,6 +318,14 @@ typename AVLTree<KeyType, ValueType>::Node *AVLTree<KeyType, ValueType>::rotateL
     rotationRoot->parent = pivot;
     rotationRoot->rightChild = shiftedSubtree;
 
+    return finishRotation(rotationRoot, rootParent, pivot, shiftedSubtree);
+}
+
+template<typename KeyType, typename ValueType>
+typename AVLTree<KeyType, ValueType>::Node *
+AVLTree<KeyType, ValueType>::finishRotation(AVLTree::Node *rotationRoot, AVLTree::Node *rootParent,
+                                            AVLTree::Node *pivot,
+                                            AVLTree::Node *shiftedSubtree) {
     if (shiftedSubtree != nullptr) {
         shiftedSubtree->parent = rotationRoot;
     }
@@ -337,21 +354,7 @@ typename AVLTree<KeyType, ValueType>::Node *AVLTree<KeyType, ValueType>::rotateR
     rotationRoot->parent = pivot;
     rotationRoot->leftChild = shiftedSubtree;
 
-    if (shiftedSubtree != nullptr) {
-        shiftedSubtree->parent = rotationRoot;
-    }
-
-    if (rootParent != nullptr) {
-        if (rotationRoot == rootParent->leftChild) {
-            rootParent->leftChild = pivot;
-        } else {
-            rootParent->rightChild = pivot;
-        }
-    }
-
-    rotationRoot->updateHeight();
-    pivot->updateHeight();
-    return pivot;
+    return finishRotation(rotationRoot, rootParent, pivot, shiftedSubtree);
 }
 
 template<typename KeyType, typename ValueType>
