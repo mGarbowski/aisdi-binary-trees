@@ -10,7 +10,7 @@
 template<typename KeyType, typename ValueType>
 class BinarySearchTree
 {
-private:
+public:
     class Node
     {
     public:
@@ -40,6 +40,7 @@ private:
 
     };
 
+private:
     BinarySearchTree<KeyType, ValueType>::Node *root;
 
     void removeRoot();
@@ -48,6 +49,8 @@ private:
 
     static BinarySearchTree<KeyType, ValueType>::Node *
     findNode(KeyType const &key, BinarySearchTree<KeyType, ValueType>::Node *subRoot);
+
+    Node **find_closest(KeyType const &key, BinarySearchTree<KeyType, ValueType>::Node **starting_point);
 
     static void
     insertIntoSubtree(KeyType const &key, ValueType const &value, BinarySearchTree<KeyType, ValueType>::Node *subRoot);
@@ -72,8 +75,6 @@ public:
 
     size_t size() const;
 
-    Node **find_closest(KeyType const &key, BinarySearchTree<KeyType, ValueType>::Node **starting_point);
-
     void insert(KeyType const &key, ValueType const &value);
 
     void remove(KeyType const &key);
@@ -84,33 +85,42 @@ public:
 
     template<typename StreamType>
     void print(StreamType &stream) const;
+
+    KeyType& findClosestTester(KeyType& key);
 };
 
 template<typename KeyType, typename ValueType>
-BinarySearchTree<KeyType, ValueType>::Node **BinarySearchTree<KeyType, ValueType>::find_closest(const KeyType &key,
-                                                                                                BinarySearchTree<KeyType, ValueType>::Node **starting_point)
+KeyType& BinarySearchTree<KeyType, ValueType>::findClosestTester(KeyType& key)
+{
+    BinarySearchTree<KeyType, ValueType>::Node** rootptr = &root;
+    auto closest = find_closest(key, rootptr);
+    static int k = (*closest)->key;
+    return k;
+}
+
+template<typename KeyType, typename ValueType>
+typename BinarySearchTree<KeyType, ValueType>::Node **BinarySearchTree<KeyType, ValueType>::find_closest(const KeyType &key,
+                                                                                                         BinarySearchTree<KeyType, ValueType>::Node **starting_point)
 {
     Node **current_closest = starting_point;
 
-    if (*current_closest->key == key)
+    if ((*current_closest)->key == key)
     {
         return current_closest;
     }
-    else if (*current_closest->key > key && *current_closest->leftChild != nullptr)
+    else if ((*current_closest)->key > key && (*current_closest)->leftChild != nullptr)
     {
-            *current_closest = *current_closest->leftChild;
-            return find_closest(key, current_closest);
+        *current_closest = (*current_closest)->leftChild;
+        return find_closest(key, current_closest);
     }
-    else if (*current_closest->key < key && *current_closest->rightChild != nullptr)
-        {
-            *current_closest = *current_closest->rightChild;
-            return find_closest(key, current_closest);
-        }
+    else if ((*current_closest)->key < key && (*current_closest)->rightChild != nullptr)
+    {
+        *current_closest = (*current_closest)->rightChild;
+        return find_closest(key, current_closest);
+    }
     else
         return current_closest;
 }
-
-
 template<typename KeyType, typename ValueType>
 size_t BinarySearchTree<KeyType, ValueType>::sizeOfSubtree(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const
 {
