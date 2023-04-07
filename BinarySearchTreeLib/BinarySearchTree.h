@@ -8,9 +8,11 @@
 
 
 template<typename KeyType, typename ValueType>
-class BinarySearchTree {
+class BinarySearchTree
+{
 private:
-    class Node {
+    class Node
+    {
     public:
         Node *leftChild;
         Node *rightChild;
@@ -31,6 +33,7 @@ private:
          * Used in the remove function to substitute the node if it has two children.
          * Returns the node with the largest key value from its left subtree.
          */
+
         Node *biggestNodeToTheLeft() const;
 
         Node *traverseRight();
@@ -43,11 +46,11 @@ private:
 
     static const auto PRINT_NEST_INDENT = 4;
 
-    static BinarySearchTree<KeyType, ValueType>::Node *findNode(KeyType const &key,
-                                                                BinarySearchTree<KeyType, ValueType>::Node *subRoot);
+    static BinarySearchTree<KeyType, ValueType>::Node *
+    findNode(KeyType const &key, BinarySearchTree<KeyType, ValueType>::Node *subRoot);
 
-    static void insertIntoSubtree(KeyType const &key, ValueType const &value,
-                                  BinarySearchTree<KeyType, ValueType>::Node *subRoot);
+    static void
+    insertIntoSubtree(KeyType const &key, ValueType const &value, BinarySearchTree<KeyType, ValueType>::Node *subRoot);
 
     static std::string subTreeToString(BinarySearchTree<KeyType, ValueType>::Node *subRoot);
 
@@ -69,6 +72,8 @@ public:
 
     size_t size() const;
 
+    Node **find_closest(KeyType const &key, BinarySearchTree<KeyType, ValueType>::Node **starting_point);
+
     void insert(KeyType const &key, ValueType const &value);
 
     void remove(KeyType const &key);
@@ -82,7 +87,33 @@ public:
 };
 
 template<typename KeyType, typename ValueType>
-size_t BinarySearchTree<KeyType, ValueType>::sizeOfSubtree(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const {
+BinarySearchTree<KeyType, ValueType>::Node **BinarySearchTree<KeyType, ValueType>::find_closest(const KeyType &key,
+                                                                                                BinarySearchTree<KeyType, ValueType>::Node **starting_point)
+{
+    Node **current_closest = starting_point;
+
+    if (*current_closest->key == key)
+    {
+        return current_closest;
+    }
+    else if (*current_closest->key > key && *current_closest->leftChild != nullptr)
+    {
+            *current_closest = *current_closest->leftChild;
+            return find_closest(key, current_closest);
+    }
+    else if (*current_closest->key < key && *current_closest->rightChild != nullptr)
+        {
+            *current_closest = *current_closest->rightChild;
+            return find_closest(key, current_closest);
+        }
+    else
+        return current_closest;
+}
+
+
+template<typename KeyType, typename ValueType>
+size_t BinarySearchTree<KeyType, ValueType>::sizeOfSubtree(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const
+{
     if (subRoot == nullptr)
         return 0;
 
@@ -92,24 +123,28 @@ size_t BinarySearchTree<KeyType, ValueType>::sizeOfSubtree(BinarySearchTree<KeyT
 }
 
 template<typename KeyType, typename ValueType>
-BinarySearchTree<KeyType, ValueType>::~BinarySearchTree() {
+BinarySearchTree<KeyType, ValueType>::~BinarySearchTree()
+{
     delete root;
 }
 
 template<typename KeyType, typename ValueType>
-BinarySearchTree<KeyType, ValueType>::Node::~Node() {
+BinarySearchTree<KeyType, ValueType>::Node::~Node()
+{
     delete leftChild;
     delete rightChild;
 }
 
 template<typename KeyType, typename ValueType>
-BinarySearchTree<KeyType, ValueType>::BinarySearchTree() {
+BinarySearchTree<KeyType, ValueType>::BinarySearchTree()
+{
     root = nullptr;
 }
 
 
 template<typename KeyType, typename ValueType>
-typename BinarySearchTree<KeyType, ValueType>::Node *BinarySearchTree<KeyType, ValueType>::Node::traverseRight() {
+typename BinarySearchTree<KeyType, ValueType>::Node *BinarySearchTree<KeyType, ValueType>::Node::traverseRight()
+{
     if (rightChild == nullptr)
         return this;
     return rightChild->traverseRight();
@@ -117,12 +152,14 @@ typename BinarySearchTree<KeyType, ValueType>::Node *BinarySearchTree<KeyType, V
 
 template<typename KeyType, typename ValueType>
 typename BinarySearchTree<KeyType, ValueType>::Node *
-BinarySearchTree<KeyType, ValueType>::Node::biggestNodeToTheLeft() const {
+BinarySearchTree<KeyType, ValueType>::Node::biggestNodeToTheLeft() const
+{
     return leftChild->traverseRight();
 }
 
 template<typename KeyType, typename ValueType>
-int BinarySearchTree<KeyType, ValueType>::Node::numOfChildren() const {
+int BinarySearchTree<KeyType, ValueType>::Node::numOfChildren() const
+{
     int notNullChildren = 0;
     if (rightChild != nullptr)
         notNullChildren++;
@@ -133,14 +170,16 @@ int BinarySearchTree<KeyType, ValueType>::Node::numOfChildren() const {
 }
 
 template<typename KeyType, typename ValueType>
-std::string BinarySearchTree<KeyType, ValueType>::Node::toString(std::string separator) const {
+std::string BinarySearchTree<KeyType, ValueType>::Node::toString(std::string separator) const
+{
     std::stringstream ss;
     ss << "[" << key << "," << separator << value << "]";
     return ss.str();
 }
 
 template<typename KeyType, typename ValueType>
-BinarySearchTree<KeyType, ValueType>::Node::Node(KeyType key, ValueType value, Node *parent) {
+BinarySearchTree<KeyType, ValueType>::Node::Node(KeyType key, ValueType value, Node *parent)
+{
     this->key = key;
     this->value = value;
     this->parent = parent;
@@ -151,12 +190,14 @@ BinarySearchTree<KeyType, ValueType>::Node::Node(KeyType key, ValueType value, N
 
 template<typename KeyType, typename ValueType>
 template<typename StreamType>
-void BinarySearchTree<KeyType, ValueType>::print(StreamType &stream) const{
+void BinarySearchTree<KeyType, ValueType>::print(StreamType &stream) const
+{
     printSubtree(stream, root, 0, "");
 }
 
 template<typename KeyType, typename ValueType>
-std::string BinarySearchTree<KeyType, ValueType>::indentWhitespace(int width) {
+std::string BinarySearchTree<KeyType, ValueType>::indentWhitespace(int width)
+{
     return std::string(width, ' ');
 }
 
@@ -164,7 +205,8 @@ template<typename KeyType, typename ValueType>
 template<typename StreamType>
 void BinarySearchTree<KeyType, ValueType>::printSubtree(StreamType &stream,
                                                         BinarySearchTree<KeyType, ValueType>::Node *subRoot,
-                                                        const int indent, const std::string &prefix) {
+                                                        const int indent, const std::string &prefix)
+{
     if (subRoot == nullptr)
         return;
 
@@ -177,11 +219,14 @@ void BinarySearchTree<KeyType, ValueType>::printSubtree(StreamType &stream,
 }
 
 template<typename KeyType, typename ValueType>
-void BinarySearchTree<KeyType, ValueType>::removeRoot() {
-    if (root->numOfChildren() == 0) {
+void BinarySearchTree<KeyType, ValueType>::removeRoot()
+{
+    if (root->numOfChildren() == 0)
+    {
         delete root;
         root = nullptr;
-    } else if (root->numOfChildren() == 1) {
+    } else if (root->numOfChildren() == 1)
+    {
         if (root->rightChild != nullptr)
         {
             auto newRoot = root->rightChild;
@@ -189,8 +234,7 @@ void BinarySearchTree<KeyType, ValueType>::removeRoot() {
             delete root;
             newRoot->parent = nullptr;
             root = newRoot;
-        }
-        else
+        } else
         {
             auto newRoot = root->leftChild;
             root->leftChild = nullptr;
@@ -199,10 +243,12 @@ void BinarySearchTree<KeyType, ValueType>::removeRoot() {
             root = newRoot;
         }
 
-    } else {
+    } else
+    {
         auto newRoot = root->biggestNodeToTheLeft();
 
-        if (newRoot->leftChild != nullptr) {
+        if (newRoot->leftChild != nullptr)
+        {
             newRoot->leftChild->parent = newRoot->parent;
             newRoot->parent->rightChild = newRoot->leftChild;
         }
@@ -234,14 +280,16 @@ void BinarySearchTree<KeyType, ValueType>::removeRoot() {
 }
 
 template<typename KeyType, typename ValueType>
-void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key) {
+void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
+{
     auto nodeToRemove = findNode(key, root);
 
     if (nodeToRemove == nullptr)
         return;
 
 
-    if (nodeToRemove->parent == nullptr) {
+    if (nodeToRemove->parent == nullptr)
+    {
         removeRoot();
         return;
     }
@@ -249,7 +297,8 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key) {
     auto parentOfRemovedNode = nodeToRemove->parent;
 
 
-    if (nodeToRemove->numOfChildren() == 0) {
+    if (nodeToRemove->numOfChildren() == 0)
+    {
         if (parentOfRemovedNode->rightChild == nodeToRemove)
             parentOfRemovedNode->rightChild = nullptr;
         else
@@ -257,31 +306,38 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key) {
 
         delete nodeToRemove;
 
-    } else if (nodeToRemove->numOfChildren() == 1) {
+    } else if (nodeToRemove->numOfChildren() == 1)
+    {
         // case - the node to be removed is its parent's right child
-        if (parentOfRemovedNode->rightChild == nodeToRemove) {
+        if (parentOfRemovedNode->rightChild == nodeToRemove)
+        {
             // subcase - the non-null child (the successor of the removed node) is on the right
-            if (nodeToRemove->rightChild != nullptr) {
+            if (nodeToRemove->rightChild != nullptr)
+            {
                 auto nonNullChild = nodeToRemove->rightChild;
                 nodeToRemove->rightChild = nullptr;
                 nonNullChild->parent = parentOfRemovedNode;
                 parentOfRemovedNode->rightChild = nonNullChild;
-            } else {
+            } else
+            {
                 // subcase - the successor is on the left
                 auto nonNullChild = nodeToRemove->leftChild;
                 nodeToRemove->leftChild = nullptr;
                 nonNullChild->parent = parentOfRemovedNode;
                 parentOfRemovedNode->rightChild = nonNullChild;
             }
-        } else {
+        } else
+        {
             // case - the node to be removed is the left child of its parent
-            if (nodeToRemove->rightChild != nullptr) {
+            if (nodeToRemove->rightChild != nullptr)
+            {
                 // successor on the right
                 auto nonNullChild = nodeToRemove->rightChild;
                 nodeToRemove->rightChild = nullptr;
                 nonNullChild->parent = parentOfRemovedNode;
                 parentOfRemovedNode->leftChild = nonNullChild;
-            } else {
+            } else
+            {
                 // succesor on the left
                 auto nonNullChild = nodeToRemove->leftChild;
                 nodeToRemove->leftChild = nullptr;
@@ -289,10 +345,12 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key) {
                 parentOfRemovedNode->leftChild = nonNullChild;
             }
         }
-    } else {
+    } else
+    {
         auto substitutionNode = nodeToRemove->biggestNodeToTheLeft();
 
-        if (substitutionNode->leftChild != nullptr) {
+        if (substitutionNode->leftChild != nullptr)
+        {
             // case where the biggest node in the left subtree has smaller children
             substitutionNode->leftChild->parent = substitutionNode->parent;
             substitutionNode->parent->rightChild = substitutionNode->leftChild;
@@ -315,8 +373,8 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key) {
 
 template<typename KeyType, typename ValueType>
 typename BinarySearchTree<KeyType, ValueType>::Node *
-BinarySearchTree<KeyType, ValueType>::findNode(const KeyType &key,
-                                               BinarySearchTree<KeyType, ValueType>::Node *subRoot) {
+BinarySearchTree<KeyType, ValueType>::findNode(const KeyType &key, BinarySearchTree<KeyType, ValueType>::Node *subRoot)
+{
     if (subRoot == nullptr || subRoot->key == key)
         return subRoot;
     else if (subRoot->key < key)
@@ -327,13 +385,14 @@ BinarySearchTree<KeyType, ValueType>::findNode(const KeyType &key,
 
 
 template<typename KeyType, typename ValueType>
-ValueType *BinarySearchTree<KeyType, ValueType>::find(const KeyType &key) {
+ValueType *BinarySearchTree<KeyType, ValueType>::find(const KeyType &key)
+{
     return findInSubtree(key, root);
 }
 
 template<typename KeyType, typename ValueType>
-std::string
-BinarySearchTree<KeyType, ValueType>::subTreeToString(BinarySearchTree<KeyType, ValueType>::Node *subRoot) {
+std::string BinarySearchTree<KeyType, ValueType>::subTreeToString(BinarySearchTree<KeyType, ValueType>::Node *subRoot)
+{
     if (subRoot == nullptr)
         return "";
 
@@ -346,41 +405,51 @@ BinarySearchTree<KeyType, ValueType>::subTreeToString(BinarySearchTree<KeyType, 
 }
 
 template<typename KeyType, typename ValueType>
-std::string BinarySearchTree<KeyType, ValueType>::toString() const {
+std::string BinarySearchTree<KeyType, ValueType>::toString() const
+{
     return subTreeToString(root);
 }
 
 
 template<typename KeyType, typename ValueType>
 ValueType *BinarySearchTree<KeyType, ValueType>::findInSubtree(const KeyType &key,
-                                                               BinarySearchTree<KeyType, ValueType>::Node *subRoot) {
-    if (subRoot == nullptr) {
+                                                               BinarySearchTree<KeyType, ValueType>::Node *subRoot)
+{
+    if (subRoot == nullptr)
+    {
         return nullptr;
     }
-    if (subRoot->key == key) {
+    if (subRoot->key == key)
+    {
         auto valPtr = new ValueType;
         *valPtr = subRoot->value;
         return valPtr;
     }
 
-    if (subRoot->key > key) {
+    if (subRoot->key > key)
+    {
         return findInSubtree(key, subRoot->leftChild);
-    } else {
+    } else
+    {
         return findInSubtree(key, subRoot->rightChild);
     }
 }
 
 template<typename KeyType, typename ValueType>
 void BinarySearchTree<KeyType, ValueType>::insertIntoSubtree(const KeyType &key, const ValueType &value,
-                                                             BinarySearchTree<KeyType, ValueType>::Node *subRoot) {
-    if (subRoot->key == key) {
+                                                             BinarySearchTree<KeyType, ValueType>::Node *subRoot)
+{
+    if (subRoot->key == key)
+    {
         subRoot->value = value;
-    } else if (subRoot->key < key) {
+    } else if (subRoot->key < key)
+    {
         if (subRoot->rightChild == nullptr)
             subRoot->rightChild = new BinarySearchTree<KeyType, ValueType>::Node(key, value, subRoot);
         else
             insertIntoSubtree(key, value, subRoot->rightChild);
-    } else {
+    } else
+    {
         if (subRoot->leftChild == nullptr)
             subRoot->leftChild = new BinarySearchTree<KeyType, ValueType>::Node(key, value, subRoot);
         else
@@ -390,8 +459,10 @@ void BinarySearchTree<KeyType, ValueType>::insertIntoSubtree(const KeyType &key,
 
 
 template<typename KeyType, typename ValueType>
-void BinarySearchTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &value) {
-    if (root == nullptr) {
+void BinarySearchTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &value)
+{
+    if (root == nullptr)
+    {
         root = new BinarySearchTree<KeyType, ValueType>::Node(key, value);
         return;
     }
@@ -399,12 +470,14 @@ void BinarySearchTree<KeyType, ValueType>::insert(const KeyType &key, const Valu
 }
 
 template<typename KeyType, typename ValueType>
-size_t BinarySearchTree<KeyType, ValueType>::size() const {
+size_t BinarySearchTree<KeyType, ValueType>::size() const
+{
     return sizeOfSubtree(root);
 }
 
 template<typename KeyType, typename ValueType>
-std::ostream &operator<<(std::ostream &stream, BinarySearchTree<KeyType, ValueType> const &tree) {
+std::ostream &operator<<(std::ostream &stream, BinarySearchTree<KeyType, ValueType> const &tree)
+{
     tree.print(stream);
     return stream;
 }
