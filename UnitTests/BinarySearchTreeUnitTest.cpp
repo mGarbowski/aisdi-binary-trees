@@ -503,7 +503,6 @@ namespace BinarySearchTreeUnitTest
         tree.insert(3, 3);
         tree.insert(6, 6);
         tree.insert(5, 5);
-        tree.insert(7, 7);
 
         int searched = 1;
         int closest = tree.findClosestTester(searched);

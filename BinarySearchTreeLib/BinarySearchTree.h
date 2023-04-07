@@ -57,8 +57,6 @@ private:
 
     static std::string subTreeToString(BinarySearchTree<KeyType, ValueType>::Node *subRoot);
 
-    static ValueType *findInSubtree(KeyType const &key, BinarySearchTree<KeyType, ValueType>::Node *subRoot);
-
     template<typename StreamType>
     static void printSubtree(StreamType &stream, BinarySearchTree<KeyType, ValueType>::Node *subRoot, int indent,
                              std::string const &prefix);
@@ -86,41 +84,40 @@ public:
     template<typename StreamType>
     void print(StreamType &stream) const;
 
-    KeyType& findClosestTester(KeyType& key);
+    KeyType findClosestTester(KeyType &key);
 };
 
 template<typename KeyType, typename ValueType>
-KeyType& BinarySearchTree<KeyType, ValueType>::findClosestTester(KeyType& key)
+KeyType BinarySearchTree<KeyType, ValueType>::findClosestTester(KeyType &key)
 {
-    BinarySearchTree<KeyType, ValueType>::Node** rootptr = &root;
+    BinarySearchTree<KeyType, ValueType>::Node **rootptr = &root;
     auto closest = find_closest(key, rootptr);
-    static int k = (*closest)->key;
+    int k = (*closest)->key;
     return k;
 }
 
 template<typename KeyType, typename ValueType>
-typename BinarySearchTree<KeyType, ValueType>::Node **BinarySearchTree<KeyType, ValueType>::find_closest(const KeyType &key,
-                                                                                                         BinarySearchTree<KeyType, ValueType>::Node **starting_point)
+typename BinarySearchTree<KeyType, ValueType>::Node **
+BinarySearchTree<KeyType, ValueType>::find_closest(const KeyType &key,
+                                                   BinarySearchTree<KeyType, ValueType>::Node **starting_point)
 {
     Node **current_closest = starting_point;
 
     if ((*current_closest)->key == key)
     {
         return current_closest;
-    }
-    else if ((*current_closest)->key > key && (*current_closest)->leftChild != nullptr)
+    } else if ((*current_closest)->key > key && (*current_closest)->leftChild != nullptr)
     {
         *current_closest = (*current_closest)->leftChild;
         return find_closest(key, current_closest);
-    }
-    else if ((*current_closest)->key < key && (*current_closest)->rightChild != nullptr)
+    } else if ((*current_closest)->key < key && (*current_closest)->rightChild != nullptr)
     {
         *current_closest = (*current_closest)->rightChild;
         return find_closest(key, current_closest);
-    }
-    else
+    } else
         return current_closest;
 }
+
 template<typename KeyType, typename ValueType>
 size_t BinarySearchTree<KeyType, ValueType>::sizeOfSubtree(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const
 {
@@ -397,7 +394,18 @@ BinarySearchTree<KeyType, ValueType>::findNode(const KeyType &key, BinarySearchT
 template<typename KeyType, typename ValueType>
 ValueType *BinarySearchTree<KeyType, ValueType>::find(const KeyType &key)
 {
-    return findInSubtree(key, root);
+    if (root == nullptr)
+        return nullptr;
+
+    BinarySearchTree<KeyType, ValueType>::Node **rootptr = &root;
+    auto closest = find_closest(key, rootptr);
+    if ((*closest)->key == key)
+    {
+        auto valptr = new ValueType;
+        *valptr = (*closest)->value;
+        return valptr;
+    }
+    return nullptr;
 }
 
 template<typename KeyType, typename ValueType>
@@ -418,31 +426,6 @@ template<typename KeyType, typename ValueType>
 std::string BinarySearchTree<KeyType, ValueType>::toString() const
 {
     return subTreeToString(root);
-}
-
-
-template<typename KeyType, typename ValueType>
-ValueType *BinarySearchTree<KeyType, ValueType>::findInSubtree(const KeyType &key,
-                                                               BinarySearchTree<KeyType, ValueType>::Node *subRoot)
-{
-    if (subRoot == nullptr)
-    {
-        return nullptr;
-    }
-    if (subRoot->key == key)
-    {
-        auto valPtr = new ValueType;
-        *valPtr = subRoot->value;
-        return valPtr;
-    }
-
-    if (subRoot->key > key)
-    {
-        return findInSubtree(key, subRoot->leftChild);
-    } else
-    {
-        return findInSubtree(key, subRoot->rightChild);
-    }
 }
 
 template<typename KeyType, typename ValueType>
