@@ -1,5 +1,6 @@
 #include <chrono>
 #include <random>
+#include <algorithm>
 #include <map>
 #include "../benchmark/benchmark.h"
 #include "../BinarySearchTreeLib/BinarySearchTree.h"
@@ -49,6 +50,7 @@ int main() {
     }
 
     // Node deletion benchmark
+    auto rng = std::default_random_engine {};
     for (auto sampleSize: sampleSizes)
     {
         auto tree_2 = BinarySearchTree<unsigned long, unsigned long>();
@@ -57,13 +59,20 @@ int main() {
         }
 
         Benchmark<std::chrono::nanoseconds> timer;
+        std::vector<unsigned long> indices;
 
         for (size_t idx = 0; idx < sampleSize; idx++) {
-            tree_2.remove(randomNumbers[idx]);
+            indices.push_back(idx);
+        }
+        std::shuffle(indices.begin(), indices.end(), rng);
+
+        for (auto index: indices) {
+            tree_2.remove(randomNumbers[index]);
         }
 
         auto timeNanos = timer.elapsed();
         deletionTimeNanos[sampleSize] = timeNanos;
+        indices.clear();
     }
 
 
