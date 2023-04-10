@@ -29,21 +29,20 @@ public:
     };
 
 private:
-    BinarySearchTree<KeyType, ValueType>::Node *root;
+    Node *root;
 
     static const auto PRINT_NEST_INDENT = 4;
 
-    Node **findClosest(KeyType const &key, BinarySearchTree<KeyType, ValueType>::Node **starting_point);
+    Node **findClosest(KeyType const &key, Node **starting_point);
 
-    static std::string subTreeToString(BinarySearchTree<KeyType, ValueType>::Node *subRoot);
+    static std::string subTreeToString(Node *subRoot);
 
     template<typename StreamType>
-    static void printSubtree(StreamType &stream, BinarySearchTree<KeyType, ValueType>::Node *subRoot, int indent,
-                             std::string const &prefix);
+    static void printSubtree(StreamType &stream, Node *subRoot, int indent, std::string const &prefix);
 
     static std::string indentWhitespace(int width);
 
-    size_t sizeOfSubtree(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const;
+    size_t sizeOfSubtree(Node *subRoot) const;
 
 public:
 
@@ -73,8 +72,8 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
     if (root == nullptr)
         return;
 
-    BinarySearchTree<KeyType, ValueType>::Node **rootptr = &root;
-    BinarySearchTree<KeyType, ValueType>::Node **closest = findClosest(key, rootptr);
+    Node **rootptr = &root;
+    Node **closest = findClosest(key, rootptr);
 
     if ((*closest)->key != key) // node not found, do nothing and return
         return;
@@ -121,7 +120,7 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
 template<typename KeyType, typename ValueType>
 KeyType BinarySearchTree<KeyType, ValueType>::findClosestTester(KeyType &key)
 {
-    BinarySearchTree<KeyType, ValueType>::Node **rootptr = &root;
+    Node **rootptr = &root;
     auto closest = findClosest(key, rootptr);
     int k = (*closest)->key;
     return k;
@@ -129,8 +128,7 @@ KeyType BinarySearchTree<KeyType, ValueType>::findClosestTester(KeyType &key)
 
 template<typename KeyType, typename ValueType>
 typename BinarySearchTree<KeyType, ValueType>::Node **
-BinarySearchTree<KeyType, ValueType>::findClosest(const KeyType &key,
-                                                  BinarySearchTree<KeyType, ValueType>::Node **starting_point)
+BinarySearchTree<KeyType, ValueType>::findClosest(const KeyType &key, Node **starting_point)
 {
     Node **current_closest = starting_point;
 
@@ -150,7 +148,7 @@ BinarySearchTree<KeyType, ValueType>::findClosest(const KeyType &key,
 }
 
 template<typename KeyType, typename ValueType>
-size_t BinarySearchTree<KeyType, ValueType>::sizeOfSubtree(BinarySearchTree<KeyType, ValueType>::Node *subRoot) const
+size_t BinarySearchTree<KeyType, ValueType>::sizeOfSubtree(Node *subRoot) const
 {
     if (subRoot == nullptr)
         return 0;
@@ -212,7 +210,7 @@ std::string BinarySearchTree<KeyType, ValueType>::indentWhitespace(int width)
 template<typename KeyType, typename ValueType>
 template<typename StreamType>
 void BinarySearchTree<KeyType, ValueType>::printSubtree(StreamType &stream,
-                                                        BinarySearchTree<KeyType, ValueType>::Node *subRoot,
+                                                        Node *subRoot,
                                                         const int indent, const std::string &prefix)
 {
     if (subRoot == nullptr)
@@ -232,7 +230,7 @@ ValueType *BinarySearchTree<KeyType, ValueType>::find(const KeyType &key)
     if (root == nullptr)
         return nullptr;
 
-    BinarySearchTree<KeyType, ValueType>::Node **rootptr = &root;
+    Node **rootptr = &root;
     auto closest = findClosest(key, rootptr);
     if ((*closest)->key == key)
     {
@@ -242,7 +240,7 @@ ValueType *BinarySearchTree<KeyType, ValueType>::find(const KeyType &key)
 }
 
 template<typename KeyType, typename ValueType>
-std::string BinarySearchTree<KeyType, ValueType>::subTreeToString(BinarySearchTree<KeyType, ValueType>::Node *subRoot)
+std::string BinarySearchTree<KeyType, ValueType>::subTreeToString(Node *subRoot)
 {
     if (subRoot == nullptr)
         return "";
@@ -266,21 +264,21 @@ void BinarySearchTree<KeyType, ValueType>::insert(const KeyType &key, const Valu
 {
     if (root == nullptr)
     {
-        root = new BinarySearchTree<KeyType, ValueType>::Node(key, value);
+        root = new Node(key, value);
         return;
     }
 
-    BinarySearchTree<KeyType, ValueType>::Node **rootptr = &root;
-    BinarySearchTree<KeyType, ValueType>::Node **closest = findClosest(key, rootptr);
+    Node **rootptr = &root;
+    Node **closest = findClosest(key, rootptr);
 
     if ((*closest)->key == key)
         (*closest)->value = value;
 
     else if ((*closest)->key > key)
-        (*closest)->leftChild = new BinarySearchTree<KeyType, ValueType>::Node(key, value);
+        (*closest)->leftChild = new Node(key, value);
 
     else
-        (*closest)->rightChild = new BinarySearchTree<KeyType, ValueType>::Node(key, value);
+        (*closest)->rightChild = new Node(key, value);
 
 }
 
