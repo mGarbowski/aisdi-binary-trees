@@ -166,8 +166,7 @@ private:
      * @param prefix prefix inserted before node (Left/Right)
      */
     template<typename StreamType>
-    static void
-    printSubtree(StreamType &stream, Node const *subRoot, int indent, std::string const &prefix);
+    static void printSubtree(StreamType &stream, Node const *subRoot, int indent, std::string const &prefix);
 
     /**
      * Return string representation of the subtree in pre-order traversal
