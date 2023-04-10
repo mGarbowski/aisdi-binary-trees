@@ -146,7 +146,7 @@ private:
      * @param subRoot root node of the scanned subtree
      * @return pointer to value associated with key or nullptr if not found
      */
-    static ValueType *findInSubtree(KeyType const &key, Node const *subRoot);
+    static ValueType *findInSubtree(KeyType const &key, Node *subRoot);
 
     /**
      * Get number of elements stored in a subtree
@@ -224,7 +224,7 @@ public:
      * @param key key mapped to searched value
      * @return pointer to the value or nullptr if not found
      */
-    ValueType *find(KeyType const &key) const;
+    ValueType *find(KeyType const &key);
 
     /**
      * String representation of the tree in pre-order traversal
@@ -443,7 +443,7 @@ void AVLTree<KeyType, ValueType>::insert(const KeyType &key, const ValueType &va
 }
 
 template<typename KeyType, typename ValueType>
-ValueType *AVLTree<KeyType, ValueType>::findInSubtree(KeyType const &key, Node const *subRoot) {
+ValueType *AVLTree<KeyType, ValueType>::findInSubtree(KeyType const &key, Node *subRoot) {
     if (subRoot == nullptr) {
         return nullptr;
     }
@@ -458,7 +458,7 @@ ValueType *AVLTree<KeyType, ValueType>::findInSubtree(KeyType const &key, Node c
 }
 
 template<typename KeyType, typename ValueType>
-ValueType *AVLTree<KeyType, ValueType>::find(const KeyType &key) const {
+ValueType *AVLTree<KeyType, ValueType>::find(const KeyType &key) {
     return findInSubtree(key, root);
 }
 
