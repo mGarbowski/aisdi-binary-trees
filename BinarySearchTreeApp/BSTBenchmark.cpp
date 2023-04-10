@@ -58,7 +58,7 @@ int main() {
 
         Benchmark<std::chrono::nanoseconds> timer;
 
-        for (size_t idx = 0; idx < 80; idx++) {
+        for (size_t idx = 0; idx < sampleSize; idx++) {
             tree_2.remove(randomNumbers[idx]);
         }
 
@@ -82,7 +82,7 @@ int main() {
     }
     std::cout << '\n';
 
-    std::cout << "Deletion time benchmark\nSize\ttime (ns)\n";
+    std::cout << "Removal time benchmark\nSize\ttime (ns)\n";
     for (it = deletionTimeNanos.begin(); it != deletionTimeNanos.end(); it++) {
         auto pair = *it;
         std::cout << pair.first << "\t" << pair.second << std::endl;

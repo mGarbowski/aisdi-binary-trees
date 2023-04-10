@@ -73,41 +73,39 @@ void BinarySearchTree<KeyType, ValueType>::remove(const KeyType &key)
     if (root == nullptr)
         return;
 
-    BinarySearchTree<KeyType, ValueType>::Node** rootptr = &root;
-    BinarySearchTree<KeyType, ValueType>::Node** closest = findClosest(key, rootptr);
+    BinarySearchTree<KeyType, ValueType>::Node **rootptr = &root;
+    BinarySearchTree<KeyType, ValueType>::Node **closest = findClosest(key, rootptr);
 
-    if ((*closest)->key != key)
+    if ((*closest)->key != key) // node not found, do nothing and return
         return;
 
-    if ((*closest)->rightChild == nullptr && (*closest)->leftChild == nullptr)
+    if ((*closest)->rightChild == nullptr &&
+        (*closest)->leftChild == nullptr) // no children, just change the pointer from its parent to null and delete
     {
         auto removedNode = *closest;
         *closest = nullptr;
         delete removedNode;
-    }
-
-    else if ((*closest)->rightChild == nullptr && (*closest)->leftChild != nullptr)
+    } else if ((*closest)->rightChild == nullptr && (*closest)->leftChild !=
+                                                    nullptr) // single child cases, swap its non null child in ints place and delete the node
     {
         auto removedNode = *closest;
         *closest = (*closest)->leftChild;
         removedNode->leftChild = nullptr;
         delete removedNode;
-    }
-
-    else if ((*closest)->leftChild == nullptr && (*closest)->rightChild != nullptr)
+    } else if ((*closest)->leftChild == nullptr && (*closest)->rightChild != nullptr)
     {
         auto removedNode = *closest;
         *closest = (*closest)->rightChild;
         removedNode->rightChild = nullptr;
         delete removedNode;
-    }
-
-    else
+    } else
     {
         auto removedNode = *closest;
-        auto subNode = findClosest((*closest)->key, &((*closest)->leftChild)); // find the node on the left of the removed node with the largest value
-        auto keepSubNode = *subNode; // store a pointer to the subnode before changing the original pointer
-        *subNode = ((*subNode)->leftChild == nullptr) ? nullptr : ((*subNode)->leftChild); // remove the substitution node from its place and substitute it with its left child if necessary
+        auto subNode = findClosest((*closest)->key,
+                                   &((*closest)->leftChild)); // find the node on the left of the removed node with the largest value
+        auto keepSubNode = *subNode; // store a pointer to the subnode before changing the original pointer from its parent
+        *subNode = ((*subNode)->leftChild == nullptr) ? nullptr
+                                                      : ((*subNode)->leftChild); // remove the substitution node from its place and substitute it with its left child if necessary
 
         keepSubNode->leftChild = removedNode->leftChild;    // repin the children
         keepSubNode->rightChild = removedNode->rightChild;
