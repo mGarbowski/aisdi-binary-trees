@@ -236,9 +236,7 @@ ValueType *BinarySearchTree<KeyType, ValueType>::find(const KeyType &key)
     auto closest = findClosest(key, rootptr);
     if ((*closest)->key == key)
     {
-        auto valptr = new ValueType;
-        *valptr = (*closest)->value;
-        return valptr;
+        return &((*closest)->value);
     }
     return nullptr;
 }
