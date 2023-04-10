@@ -3,22 +3,26 @@
 #include "../BinarySearchTreeLib/BinarySearchTree.h"
 
 
-namespace BinarySearchTreeUnitTest {
+namespace BinarySearchTreeUnitTest
+{
 
-    TEST(BinarySearchTree, ConstructEmpty) {
+    TEST(BinarySearchTree, ConstructEmpty)
+    {
         BinarySearchTree<int, int> tree;
         std::string expected = "";
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertToEmpty) {
+    TEST(BinarySearchTree, insertToEmpty)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         std::string expected = "([10,100],,)";
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertOnThe2LevelOnTheLeftThereIsNoRight) {
+    TEST(BinarySearchTree, insertOnThe2LevelOnTheLeftThereIsNoRight)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         tree.insert(5, 50);
@@ -26,7 +30,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertOnThe2LevelOnTheRightThereIsNoLeft) {
+    TEST(BinarySearchTree, insertOnThe2LevelOnTheRightThereIsNoLeft)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         tree.insert(20, 200);
@@ -34,7 +39,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertOnThe2LevelOnTheLeftThereIsRight) {
+    TEST(BinarySearchTree, insertOnThe2LevelOnTheLeftThereIsRight)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         tree.insert(20, 200);
@@ -43,7 +49,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertOnThe2LevelOnTheRightThereIsLeft) {
+    TEST(BinarySearchTree, insertOnThe2LevelOnTheRightThereIsLeft)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         tree.insert(5, 50);
@@ -52,7 +59,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertOnThe3LevelLeftLeftThereIsNoRight) {
+    TEST(BinarySearchTree, insertOnThe3LevelLeftLeftThereIsNoRight)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -62,7 +70,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertOnThe3LevelLeftLeftThereIsRight) {
+    TEST(BinarySearchTree, insertOnThe3LevelLeftLeftThereIsRight)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -73,7 +82,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertOnThe3LevelLeftRightThereIsNoLeft) {
+    TEST(BinarySearchTree, insertOnThe3LevelLeftRightThereIsNoLeft)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -83,7 +93,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertOnThe3LevelLeftRightThereIsLeft) {
+    TEST(BinarySearchTree, insertOnThe3LevelLeftRightThereIsLeft)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -94,7 +105,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertOnThe3LevelRightLeftThereIsNoRight) {
+    TEST(BinarySearchTree, insertOnThe3LevelRightLeftThereIsNoRight)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -104,7 +116,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertOnThe3LevelRightLeftThereIsRight) {
+    TEST(BinarySearchTree, insertOnThe3LevelRightLeftThereIsRight)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -115,7 +128,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertOnThe3LevelRightRightThereIsNoLeft) {
+    TEST(BinarySearchTree, insertOnThe3LevelRightRightThereIsNoLeft)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -125,7 +139,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertOnThe3LevelRightRightThereIsLeft) {
+    TEST(BinarySearchTree, insertOnThe3LevelRightRightThereIsLeft)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -136,7 +151,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, insertExisting) {
+    TEST(BinarySearchTree, insertExisting)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -152,14 +168,16 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, removeFromEmpty) {
+    TEST(BinarySearchTree, removeFromEmpty)
+    {
         BinarySearchTree<int, int> tree;
         tree.remove(10);
         std::string expected = "";
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, removeRoot) {
+    TEST(BinarySearchTree, removeRoot)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.remove(50);
@@ -167,7 +185,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, removeNotExisting) {
+    TEST(BinarySearchTree, removeNotExisting)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -184,7 +203,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, removeNodeWithoutChildren) {
+    TEST(BinarySearchTree, removeNodeWithoutChildren)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -194,7 +214,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, removeNodeWithoutLeftChild) {
+    TEST(BinarySearchTree, removeNodeWithoutLeftChild)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -205,7 +226,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, removeNodeWithoutRightChild) {
+    TEST(BinarySearchTree, removeNodeWithoutRightChild)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -216,7 +238,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, removeNodeWithChildren) {
+    TEST(BinarySearchTree, removeNodeWithChildren)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -230,12 +253,14 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(expected, tree.toString());
     }
 
-    TEST(BinarySearchTree, findInEmpty) {
+    TEST(BinarySearchTree, findInEmpty)
+    {
         BinarySearchTree<int, int> tree;
         ASSERT_EQ(nullptr, tree.find(10));
     }
 
-    TEST(BinarySearchTree, findNotExisted) {
+    TEST(BinarySearchTree, findNotExisted)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         tree.insert(5, 50);
@@ -246,7 +271,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(nullptr, tree.find(24));
     }
 
-    TEST(BinarySearchTree, findOnThe1LevelNoChildren) {
+    TEST(BinarySearchTree, findOnThe1LevelNoChildren)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         ASSERT_EQ(100, *tree.find(10));
@@ -256,21 +282,24 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(100, *tree.find(10));
     }
 
-    TEST(BinarySearchTree, findOnThe1LevelIsLeftChild) {
+    TEST(BinarySearchTree, findOnThe1LevelIsLeftChild)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         tree.insert(5, 50);
         ASSERT_EQ(100, *tree.find(10));
     }
 
-    TEST(BinarySearchTree, findOnThe1LevelIsRightChild) {
+    TEST(BinarySearchTree, findOnThe1LevelIsRightChild)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         tree.insert(20, 200);
         ASSERT_EQ(100, *tree.find(10));
     }
 
-    TEST(BinarySearchTree, findOnThe1LevelAreChildren) {
+    TEST(BinarySearchTree, findOnThe1LevelAreChildren)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         tree.insert(5, 50);
@@ -278,21 +307,24 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(100, *tree.find(10));
     }
 
-    TEST(BinarySearchTree, findOnThe2LevelOnTheLeftThereIsNoRight) {
+    TEST(BinarySearchTree, findOnThe2LevelOnTheLeftThereIsNoRight)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         tree.insert(5, 50);
         ASSERT_EQ(50, *tree.find(5));
     }
 
-    TEST(BinarySearchTree, findOnThe2LevelOnTheRightThereIsNoLeft) {
+    TEST(BinarySearchTree, findOnThe2LevelOnTheRightThereIsNoLeft)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         tree.insert(20, 200);
         ASSERT_EQ(200, *tree.find(20));
     }
 
-    TEST(BinarySearchTree, findOnThe2LevelOnTheLeftThereIsRight) {
+    TEST(BinarySearchTree, findOnThe2LevelOnTheLeftThereIsRight)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         tree.insert(20, 200);
@@ -300,7 +332,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(50, *tree.find(5));
     }
 
-    TEST(BinarySearchTree, findOnThe2LevelOnTheRightThereIsLeft) {
+    TEST(BinarySearchTree, findOnThe2LevelOnTheRightThereIsLeft)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(10, 100);
         tree.insert(5, 50);
@@ -308,7 +341,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(200, *tree.find(20));
     }
 
-    TEST(BinarySearchTree, findOnThe3LevelLeftLeftThereIsNoRight) {
+    TEST(BinarySearchTree, findOnThe3LevelLeftLeftThereIsNoRight)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -317,7 +351,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(100, *tree.find(10));
     }
 
-    TEST(BinarySearchTree, findOnThe3LevelLeftLeftThereIsRight) {
+    TEST(BinarySearchTree, findOnThe3LevelLeftLeftThereIsRight)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -327,7 +362,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(100, *tree.find(10));
     }
 
-    TEST(BinarySearchTree, findOnThe3LevelLeftRightThereIsNoLeft) {
+    TEST(BinarySearchTree, findOnThe3LevelLeftRightThereIsNoLeft)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -336,7 +372,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(300, *tree.find(30));
     }
 
-    TEST(BinarySearchTree, findOnThe3LevelLeftRightThereIsLeft) {
+    TEST(BinarySearchTree, findOnThe3LevelLeftRightThereIsLeft)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -346,7 +383,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(300, *tree.find(30));
     }
 
-    TEST(BinarySearchTree, findOnThe3LevelRightLeftThereIsNoRight) {
+    TEST(BinarySearchTree, findOnThe3LevelRightLeftThereIsNoRight)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -355,7 +393,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(700, *tree.find(70));
     }
 
-    TEST(BinarySearchTree, findOnThe3LevelRightLeftThereIsRight) {
+    TEST(BinarySearchTree, findOnThe3LevelRightLeftThereIsRight)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -365,7 +404,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(700, *tree.find(70));
     }
 
-    TEST(BinarySearchTree, findOnThe3LevelRightRightThereIsNoLeft) {
+    TEST(BinarySearchTree, findOnThe3LevelRightRightThereIsNoLeft)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -374,7 +414,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(900, *tree.find(90));
     }
 
-    TEST(BinarySearchTree, findOnThe3LevelRightRightThereIsLeft) {
+    TEST(BinarySearchTree, findOnThe3LevelRightRightThereIsLeft)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(50, 500);
         tree.insert(20, 200);
@@ -384,7 +425,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(900, *tree.find(90));
     }
 
-    TEST(BinarySearchTree, print0) {
+    TEST(BinarySearchTree, print0)
+    {
         BinarySearchTree<int, int> tree;
         std::ostringstream stream;
         tree.print(stream);
@@ -393,7 +435,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(s1, s);
     }
 
-    TEST(BinarySearchTree, print1) {
+    TEST(BinarySearchTree, print1)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(1, 1);
         std::ostringstream stream;
@@ -403,7 +446,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(s1, s);
     }
 
-    TEST(BinarySearchTree, print3) {
+    TEST(BinarySearchTree, print3)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(2, 2);
         tree.insert(1, 1);
@@ -415,7 +459,8 @@ namespace BinarySearchTreeUnitTest {
         ASSERT_EQ(s1, s);
     }
 
-    TEST(BinarySearchTree, print7) {
+    TEST(BinarySearchTree, print7)
+    {
         BinarySearchTree<int, int> tree;
         tree.insert(4, 4);
         tree.insert(2, 2);
@@ -430,5 +475,52 @@ namespace BinarySearchTreeUnitTest {
         auto s = stream.str();
         std::string s1 = "[4, 4]\n    L: [2, 2]\n        L: [1, 1]\n        R: [3, 3]\n    R: [6, 6]\n        L: [5, 5]\n        R: [7, 7]\n";
         ASSERT_EQ(s1, s);
+    }
+
+    TEST(BinarySearchTree, findclosest1)
+    {
+        BinarySearchTree<int, int> tree;
+        tree.insert(4, 4);
+        tree.insert(2, 2);
+        tree.insert(1, 1);
+        tree.insert(3, 3);
+        tree.insert(6, 6);
+        tree.insert(5, 5);
+        tree.insert(7, 7);
+
+        int searched = 9;
+        int closest = tree.findClosestTester(searched);
+
+        ASSERT_EQ(7, closest);
+    }
+
+    TEST(BinarySearchTree, findclosest2)
+    {
+        BinarySearchTree<int, int> tree;
+        tree.insert(4, 4);
+        tree.insert(2, 2);
+        tree.insert(1, 1);
+        tree.insert(3, 3);
+        tree.insert(6, 6);
+        tree.insert(5, 5);
+
+        int searched = 1;
+        int closest = tree.findClosestTester(searched);
+
+        ASSERT_EQ(1, closest);
+    }
+
+    TEST(BinarySearchTree, findclosest_root)
+    {
+        BinarySearchTree<int, int> tree;
+        tree.insert(4, 4);
+        tree.insert(6, 6);
+        tree.insert(5, 5);
+        tree.insert(7, 7);
+
+        int searched = 1;
+        int closest = tree.findClosestTester(searched);
+
+        ASSERT_EQ(4, closest);
     }
 }
