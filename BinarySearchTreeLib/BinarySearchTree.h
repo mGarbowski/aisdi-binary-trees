@@ -24,7 +24,7 @@ public:
 
         ~Node();
 
-        std::string toString(std::string separator = "") const;
+        std::string toString(const std::string& separator = "") const;
 
     };
 
@@ -181,8 +181,7 @@ BinarySearchTree<KeyType, ValueType>::BinarySearchTree()
 
 
 template<typename KeyType, typename ValueType>
-std::string BinarySearchTree<KeyType, ValueType>::Node::toString(std::string separator) const
-{
+std::string BinarySearchTree<KeyType, ValueType>::Node::toString(const std::string& separator) const {
     std::stringstream ss;
     ss << "[" << key << "," << separator << value << "]";
     return ss.str();
@@ -200,8 +199,7 @@ BinarySearchTree<KeyType, ValueType>::Node::Node(KeyType key, ValueType value)
 
 template<typename KeyType, typename ValueType>
 template<typename StreamType>
-void BinarySearchTree<KeyType, ValueType>::print(StreamType &stream) const
-{
+void BinarySearchTree<KeyType, ValueType>::print(StreamType &stream) const{
     printSubtree(stream, root, 0, "");
 }
 
@@ -289,8 +287,7 @@ void BinarySearchTree<KeyType, ValueType>::insert(const KeyType &key, const Valu
 }
 
 template<typename KeyType, typename ValueType>
-size_t BinarySearchTree<KeyType, ValueType>::size() const
-{
+size_t BinarySearchTree<KeyType, ValueType>::size() const {
     return sizeOfSubtree(root);
 }
 
