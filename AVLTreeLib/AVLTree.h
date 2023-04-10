@@ -358,10 +358,10 @@ typename AVLTree<KeyType, ValueType>::Node *AVLTree<KeyType, ValueType>::rotateR
 
 template<typename KeyType, typename ValueType>
 void AVLTree<KeyType, ValueType>::rebalance(KeyType const &insertedKey, Node *subRoot) {
-    bool isRootRotation = (subRoot == root); // TODO: use reference
+    bool isRootRotation = (subRoot == root);
     int balance = subRoot->getBalance();
 
-    if (balance > 1) { // TODO: use balance instead
+    if (balance > 1) {
         if (insertedKey < subRoot->leftChild->key) {
             subRoot = rotateRight(subRoot);  // left-left
         } else {
