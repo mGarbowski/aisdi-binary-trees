@@ -29,3 +29,6 @@ add_executable(bst-app BinarySearchTreeApp/BinarySearchTreeApp.cpp ${BST_LIBRARY
 add_executable(bst-unit-tests UnitTests/BinarySearchTreeUnitTest.cpp ${BST_LIBRARY_SOURCES})
 add_executable(bst-benchmark BinarySearchTreeApp/BSTBenchmark.cpp benchmark/benchmark.h BinarySearchTreeLib/BinarySearchTree.h ${BST_LIBRARY_SOURCES})
 target_link_libraries(bst-unit-tests PUBLIC gtest_main)
+
+add_executable(all-unit-tests UnitTests/BinarySearchTreeUnitTest.cpp UnitTests/AVLTreeUnitTest.cpp BinarySearchTreeLib/BinarySearchTree.h AVLTreeLib/AVLTree.h)
+target_link_libraries(all-unit-tests PUBLIC gtest_main)
