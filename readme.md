@@ -1,4 +1,9 @@
-# BinaryTree
+# Binary Trees
+University assignment for Algorithms and Data Structures course @ Warsaw University of Technology
+
+## Authors
+* Mikołaj Garbowski
+* Maksym Bieńkowski
 
 ## Task 1 - DESIGN TWO CLASSES
 Design two classes to represent the dictionary:
